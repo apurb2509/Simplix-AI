@@ -1,0 +1,206 @@
+:root {
+    --primary: #4F46E5;
+    --primary-hover: #4338ca;
+    --bg-color: #ffffff;
+    --text-main: #111827;
+    --text-secondary: #6B7280;
+    --border: #E5E7EB;
+    --card-bg: #F9FAFB;
+    --card-hover: #F3F4F6;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 360px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+}
+
+.app-container {
+    padding: 16px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    background-color: var(--card-hover);
+    color: var(--text-main);
+}
+
+.hidden {
+    display: none !important;
+}
+
+#settings-panel {
+    background-color: var(--card-bg);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.hint {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 6px;
+    background-color: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.mode-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mode-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.visual { background-color: #E0E7FF; color: #4F46E5; }
+.simplified { background-color: #DCFCE7; color: #16A34A; }
+.step { background-color: #FEF3C7; color: #D97706; }
+.story { background-color: #FCE7F3; color: #DB2777; }
+.kid { background-color: #E0F2FE; color: #0284C7; }
+.exam { background-color: #F3E8FF; color: #9333EA; }
+
+.mode-card span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.status-area {
+    margin-top: 20px;
+    text-align: center;
+    padding: 16px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+}
+
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #E5E7EB;
+    border-top: 2px solid var(--primary);
+    border-radius: 50%;
+    margin: 0 auto 8px auto;
+    animation: spin 1s linear infinite;
+}
+
+#status-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
