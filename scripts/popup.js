@@ -31,15 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
   
-          // Tell content script to process the page.
-          // Note: content script reads SIMPLIX_CONFIG itself (packaged in config.js)
-          await chrome.tabs.sendMessage(tab.id, {
-            action: 'processPage',
-            mode: mode
-          });
-  
-          // Close popup after successful send
-          window.close();
+          try {
+            await chrome.tabs.sendMessage(tab.id, { action: 'setMode', mode });
+            await chrome.tabs.sendMessage(tab.id, { action: 'startLive', mode });
+            window.close();
+        } catch (e) {
+            console.error("Simplix Error: Content script unavailable on this page.");
+            alert("Simplix AI cannot run on this page.\nOpen a normal website (like Wikipedia or Google) and try again.");
+        }        
   
         } catch (err) {
           console.error('Simplix Error:', err);
