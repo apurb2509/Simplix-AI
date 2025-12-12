@@ -27,6 +27,7 @@ let chatPopupTimer = null;
 const ICONS = {
   logo: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 15.5v.01"></path><path d="M12 12v.01"></path></svg>`,
   close: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
+  copy: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`,
   minimize: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
   move: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><circle cx="12" cy="12" r="1"></circle></svg>`,
   theme: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>`,
@@ -111,7 +112,27 @@ function injectStyles() {
     .sx-crop-btn { width: 100%; padding: 12px; background: transparent; border: 1px dashed var(--border); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 13px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .sx-crop-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--cardBg); }
     .sx-crop-btn.active { border-style: solid; border-color: var(--accent); background: var(--bg); color: var(--accent); }
-    
+
+    /* Copy Button in Chat */
+.sx-chat-msg { position: relative; } /* Ensure parent is relative */
+.sx-chat-copy-btn {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(255,255,255,0.2); 
+    border: none;
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sx-chat-copy-btn:hover { opacity: 1; background: rgba(255,255,255,0.4); }
+
     /* Mode Buttons - Strict Contrast */
     .sx-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .sx-mode-btn { padding: 8px 10px; border: 1px solid transparent; background: var(--bg); border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--subText); transition: all 0.2s; text-align: center; }
@@ -608,6 +629,7 @@ async function requestModelForVisibleText(text, mode) {
 function renderResult(modelData, mode, isRefreshOnly = false) {
   let overlay = document.getElementById('simplix-result-overlay');
   
+  // 1. Create Overlay if it doesn't exist
   if (!overlay && !isRefreshOnly) {
     overlay = document.createElement('div');
     overlay.id = 'simplix-result-overlay';
@@ -624,6 +646,7 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
     document.body.appendChild(overlay);
   } else if (!overlay && isRefreshOnly) return;
 
+  // 2. Apply Theme Styles
   const t = THEMES[currentTheme];
   overlay.style.setProperty('--bg', t.bg);
   overlay.style.setProperty('--cardBg', t.cardBg);
@@ -638,16 +661,18 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
   overlay.style.color = t.text;
   
   if(isRefreshOnly) {
-     const header = overlay.querySelector('.sx-drag-header');
-     if(header) { header.style.background = t.bg; header.style.borderColor = t.border; }
-     return;
+      const header = overlay.querySelector('.sx-drag-header');
+      if(header) { header.style.background = t.bg; header.style.borderColor = t.border; }
+      return;
   }
 
+  // 3. Process Content
   let contentRaw = "";
   if (typeof modelData === "string") contentRaw = modelData;
   else if (modelData?.data?.choices) contentRaw = modelData.data.choices[0].message.content;
   else contentRaw = JSON.stringify(modelData);
 
+  // 4. Construct HTML
   let html = `
     <div class="sx-drag-header">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -657,6 +682,7 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
         </div>
       </div>
       <div style="display:flex; gap:4px;">
+        <button id="res-copy" class="sx-btn-icon" title="Copy Content">${ICONS.copy}</button>
         <button id="res-min" class="sx-btn-icon" title="Minimize">${ICONS.minimize}</button>
         <button id="res-close" class="sx-btn-icon" title="Close">${ICONS.close}</button>
       </div>
@@ -691,11 +717,35 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
   html += `</div>`;
   overlay.innerHTML = html;
   
+  // 5. Add Functionality
   makeDraggable(overlay, overlay.querySelector('.sx-drag-header'));
   
   overlay.querySelector('#res-close').onclick = () => { overlay.remove(); if(chatPopupTimer) clearTimeout(chatPopupTimer); const p = document.getElementById('simplix-chat-popup'); if(p) p.remove(); };
   overlay.querySelector('#res-min').onclick = (e) => { e.stopPropagation(); toggleMinimize(overlay); };
   
+  // --- NEW: Copy Button Logic ---
+  const copyBtn = overlay.querySelector('#res-copy');
+  if (copyBtn) {
+      copyBtn.onclick = () => {
+          const contentDiv = overlay.querySelector('#simplix-result-content');
+          const textToCopy = contentDiv.innerText;
+          
+          navigator.clipboard.writeText(textToCopy).then(() => {
+              // Visual Feedback
+              const originalIcon = copyBtn.innerHTML;
+              copyBtn.innerHTML = ICONS.check; // Changes to checkmark
+              copyBtn.style.color = "var(--accent)";
+              
+              setTimeout(() => { 
+                  copyBtn.innerHTML = originalIcon; // Revert icon
+                  copyBtn.style.color = ""; // Revert color
+              }, 1500);
+          }).catch(err => {
+              console.error('Failed to copy text: ', err);
+          });
+      };
+  }
+
   overlay.onclick = (e) => { if(overlay.classList.contains('sx-minimized')) toggleMinimize(overlay); };
 
   if (mode === 'exam') attachExamListeners(overlay, t);
@@ -778,12 +828,33 @@ function showFloatingChat(contextText) {
   };
 
   const appendMessage = (role, text) => {
-      const msgDiv = document.createElement('div');
-      msgDiv.className = `sx-chat-msg ${role === 'user' ? 'sx-chat-user' : 'sx-chat-bot'}`;
-      msgDiv.textContent = text;
-      historyDiv.appendChild(msgDiv);
-      historyDiv.scrollTop = historyDiv.scrollHeight;
-  };
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `sx-chat-msg ${role === 'user' ? 'sx-chat-user' : 'sx-chat-bot'}`;
+    
+    // Basic text content
+    const textSpan = document.createElement('span');
+    textSpan.innerText = text;
+    msgDiv.appendChild(textSpan);
+
+    // Add Copy Button only for BOT messages
+    if (role !== 'user') {
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'sx-chat-copy-btn';
+        copyBtn.innerHTML = ICONS.copy;
+        copyBtn.title = "Copy";
+        
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(text).then(() => {
+                copyBtn.innerHTML = ICONS.check;
+                setTimeout(() => copyBtn.innerHTML = ICONS.copy, 1500);
+            });
+        };
+        msgDiv.appendChild(copyBtn);
+    }
+
+    historyDiv.appendChild(msgDiv);
+    historyDiv.scrollTop = historyDiv.scrollHeight;
+};
 
   const handleSend = async () => {
       const query = inputEl.value.trim();
