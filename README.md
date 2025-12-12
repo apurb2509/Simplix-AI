@@ -1,6 +1,6 @@
-# Simplix AI — Learn your way!
+# Simplix AI — Learn your way! 🧩
 
-**Simplix AI** is a powerful Chrome Extension that transforms how you interact with web content. Unlike standard AI tools that read an entire page, Simplix allows you to visually **crop** specific sections of a website—text, charts, or code—and process them through specialized AI modes.
+**Simplix AI** is a powerful **Chrome Extension** that transforms how you interact with web content. Unlike standard AI tools that read an entire page, Simplix allows you to visually **crop** specific sections of a website—text, charts, or code—and process them through specialized AI modes.
 
 > **Context is King.** Select exactly what you want the AI to see, and convert it into summaries, stories, exams, or simplified explanations instantly.
 
@@ -22,6 +22,7 @@
 * **Minimize Mode:** Keep tools active but out of the way with a single click.
 * **Theme System:** Toggle between **Blue (Glassmorphism)**, **Light**, and **Dark** high-contrast themes.
 * **Non-Intrusive:** Runs only when triggered; doesn't slow down browsing.
+* **Copy-to-Clipboard:** Instantly copy any Simplix AI or SimplixBot response with a single click for easy reuse.
 
 ### 🧠 The Core Workflow
 1.  **Crop:** Draw a selection box over any part of a webpage.
@@ -74,7 +75,7 @@ Once a result is generated, the **SimplixBot** window appears automatically.
     * *Tip:* Drag to the bottom edge to auto-scroll and capture long text.
 3.  **Choose Mode:** Click one of the 6 mode buttons (e.g., "Summary" or "Exam").
 4.  **Generate:** Click **"Generate Result"**.
-5.  **Interact:** * Read the result in the overlay.
+5.  **Interact:** Read the result in the overlay.
     * If using Exam mode, click options to test yourself.
     * Use the Chat popup to ask specific questions about what you just read.
 
