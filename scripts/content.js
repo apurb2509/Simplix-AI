@@ -556,7 +556,7 @@ function extractVisibleText(docRect) {
 // --- 6. Prompt Engineering ---
 function buildPrompt(text, mode) {
   let instructions = "";
-  const formattingRules = "IMPORTANT: Do NOT use asterisks (*) or markdown bolding/italics in the output. Keep the text clean and plain.";
+  const formattingRules = "IMPORTANT: Do NOT use asterisks (*) or markdown bolding/italics in the output at all, not even for making any heading, sub-heading or any text bold. Keep the text clean and plain.";
   
   if (mode === 'exam') {
     return `You are an strict Exam Generator. Analyze the text provided below and generate a structured exam in strictly VALID JSON format.
@@ -802,13 +802,15 @@ function showFloatingChat(contextText) {
 
       try {
           let messages = [];
+          const noFormatRule = "IMPORTANT: Do NOT use asterisks (*) or markdown formatting. Keep the text clean and plain.";
+
           if (chatMode === 'relevant') {
               messages.push({
                   role: "system",
-                  content: `You are SimplixBot. STRICT RULE: Answer ONLY based on the provided context. If the answer is not in the text, say "Sorry, it is not present in the selected area, out of context."\n\n[CONTEXT]:\n${currentContextText}`
+                  content: `You are SimplixBot. ${noFormatRule} STRICT RULE: Answer ONLY based on the provided context. If the answer is not in the text, say "Sorry, it is not present in the selected area, out of context."\n\n[CONTEXT]:\n${currentContextText}`
               });
           } else {
-              messages.push({ role: "system", content: "You are SimplixBot, a helpful assistant." });
+              messages.push({ role: "system", content: `You are SimplixBot, a helpful assistant. ${noFormatRule}` });
           }
 
           const recentHistory = chatHistory.slice(-4);
