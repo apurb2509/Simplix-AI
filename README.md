@@ -22,6 +22,7 @@
 * **Minimize Mode:** Keep tools active but out of the way with a single click.
 * **Theme System:** Toggle between **Blue (Glassmorphism)**, **Light**, and **Dark** high-contrast themes.
 * **Non-Intrusive:** Runs only when triggered; doesn't slow down browsing.
+* **Copy-to-Clipboard:** Instantly copy any Simplix AI or SimplixBot response with a single click for easy reuse.
 
 ### 🧠 The Core Workflow
 1.  **Crop:** Draw a selection box over any part of a webpage.
