@@ -24,11 +24,24 @@
 * **Non-Intrusive:** Runs only when triggered; doesn't slow down browsing.
 * **Copy-to-Clipboard:** Instantly copy any Simplix AI or SimplixBot response with a single click for easy reuse.
 
+### 📓 The Smart Notebook System
+* **Persistent Storage:** Never lose a result again. Save your generated summaries, stories, and exams directly to your local Simplix Notebook.
+* **Rich Editing:** Open any saved note to edit the text or add your own thoughts.
+* **Multi-Color Highlighter:** Use the built-in highlighter toolbar (Yellow, Green, Blue, Pink) to mark critical information inside your notes.
+* **CRUD Management:** Rename notes, delete old ones, and update content dynamically.
+
+### 🚦 Priority Status Management
+Organize your learning with a visual color-coded priority system. When saving or editing a note, assign it a status to track importance:
+* 🟢 **High Priority (Green):** Urgent or critical concepts.
+* 🔵 **Medium Priority (Blue):** Important material for review.
+* 🟡 **Low Priority (Yellow):** Good-to-know supplementary info.
+
 ### 🧠 The Core Workflow
 1.  **Crop:** Draw a selection box over any part of a webpage.
 2.  **Mode:** Choose how you want the data processed.
 3.  **Generate:** View results in a dedicated overlay.
-4.  **Chat:** Deep dive with the floating AI assistant.
+4.  **Save:** Bookmark result to the Notebook with a specific priority.
+5.  **Chat:** Deep dive with the floating AI assistant.
 
 ---
 
@@ -54,6 +67,7 @@ Once a result is generated, the **SimplixBot** window appears automatically.
 * **Relevant Mode:** Restricts the AI to answer questions **only** based on the text you cropped. Eliminates hallucinations.
 * **General Mode:** Unlocks the AI's full knowledge base for broader questions.
 * **Context Memory:** Remembers the conversation history for a natural flow.
+* **Voice Commands:** Use the microphone icon to speak your questions instead of typing.
 
 ---
 
@@ -75,9 +89,11 @@ Once a result is generated, the **SimplixBot** window appears automatically.
     * *Tip:* Drag to the bottom edge to auto-scroll and capture long text.
 3.  **Choose Mode:** Click one of the 6 mode buttons (e.g., "Summary" or "Exam").
 4.  **Generate:** Click **"Generate Result"**.
-5.  **Interact:** Read the result in the overlay.
-    * If using Exam mode, click options to test yourself.
-    * Use the Chat popup to ask specific questions about what you just read.
+5.  **Interact:** Read the result in the overlay or take the interactive exam.
+6.  **Save to Notebook:** Click the **Bookmark** icon in the header.
+    * **Rename** the note instantly in the popup.
+    * Select a **Priority Status** (Low, Med, High) via the color dots.
+7.  **Review:** Open "My Notebook" from the sidebar to access, edit, highlight, or review your saved materials.
 
 ---
 
