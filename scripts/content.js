@@ -722,7 +722,7 @@ function showFloatingChat(contextText) {
 
       <div id="simplix-chat-history" style="flex-grow:1; overflow-y:auto; padding:12px; background:var(--bg); display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:13px; color:var(--subText); text-align:center; margin-top:10px;">
-              Hello! I'm ready to help. <br>Ask me about the content on screen.
+              Hello, SimplixBot here! I'm ready to help. <br>Ask me about the content on screen.
           </div>
       </div>
 
