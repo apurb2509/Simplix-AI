@@ -51,12 +51,12 @@ Simplix offers 6 distinct "personas" for processing content:
 
 | Mode | Description | Best Used For |
 | :--- | :--- | :--- |
-| **🧸 Kid-Friendly** | Explains complex topics like a friendly teacher for 5-8 year olds. Uses analogies, simple words, and enthusiastic tone. | Learning new concepts, explaining news to kids. |
-| **📖 Story Mode** | Rewrites the content as a narrative with a plot, characters, and a moral lesson. | Making boring history or documentation fun to read. |
-| **📝 Exam Gen** | **Interactive!** Generates a structured exam (MCQs, Short Answer, Long Answer) based on the text. Includes a playable quiz interface. | Self-study, teachers creating quizzes, quick revision. |
-| **🛠️ Step-by-Step** | Breaks content into numbered actionable steps with "Action," "Reason," and "Outcome." | Tutorials, recipes, installation guides. |
-| **📊 Summary** | Professional executive analysis. Includes Executive Summary, Key Takeaways, and "Why This Matters." | Research papers, long articles, corporate reports. |
-| **🎓 Formal** | Academic scholar persona. Uses sophisticated vocabulary, passive voice, and rigorous structure. | Drafting papers, elevating language for reports. |
+| **Kid-Friendly** | Explains complex topics like a friendly teacher for 5-8 year olds. Uses analogies, simple words, and enthusiastic tone. | Learning new concepts, explaining news to kids. |
+| **Story Mode** | Rewrites the content as a narrative with a plot, characters, and a moral lesson. | Making boring history or documentation fun to read. |
+| **Exam Gen** | **Interactive!** Generates a structured exam (MCQs, Short Answer, Long Answer) based on the text. Includes a playable quiz interface. | Self-study, teachers creating quizzes, quick revision. |
+| **Step-by-Step** | Breaks content into numbered actionable steps with "Action," "Reason," and "Outcome." | Tutorials, recipes, installation guides. |
+| **Summary** | Professional executive analysis. Includes Executive Summary, Key Takeaways, and "Why This Matters." | Research papers, long articles, corporate reports. |
+| **Formal** | Academic scholar persona. Uses sophisticated vocabulary, passive voice, and rigorous structure. | Drafting papers, elevating language for reports. |
 
 ---
 
