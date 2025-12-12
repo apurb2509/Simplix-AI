@@ -1,6 +1,6 @@
 # Simplix AI — Learn your way! 🧩
 
-**Simplix AI** is a powerful Chrome Extension that transforms how you interact with web content. Unlike standard AI tools that read an entire page, Simplix allows you to visually **crop** specific sections of a website—text, charts, or code—and process them through specialized AI modes.
+**Simplix AI** is a powerful **Chrome Extension** that transforms how you interact with web content. Unlike standard AI tools that read an entire page, Simplix allows you to visually **crop** specific sections of a website—text, charts, or code—and process them through specialized AI modes.
 
 > **Context is King.** Select exactly what you want the AI to see, and convert it into summaries, stories, exams, or simplified explanations instantly.
 
