@@ -28,6 +28,7 @@ const ICONS = {
   logo: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 15.5v.01"></path><path d="M12 12v.01"></path></svg>`,
   close: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
   copy: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`,
+  mic: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>`,
   minimize: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
   move: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><circle cx="12" cy="12" r="1"></circle></svg>`,
   theme: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>`,
@@ -792,6 +793,7 @@ function showFloatingChat(contextText) {
 
       <div style="padding:10px; background:var(--cardBg); border-top:1px solid var(--border); border-radius:0 0 12px 12px; display:flex; gap:6px;">
           <input type="text" id="simplix-chat-input" placeholder="Ask a question..." style="flex-grow:1; border:1px solid var(--border); padding:8px 10px; border-radius:6px; outline:none; font-size:13px; background:var(--bg); color:var(--text);">
+          <button id="simplix-chat-mic" style="background:transparent; color:var(--subText); border:1px solid var(--border); padding:0 10px; border-radius:6px; cursor:pointer; transition:0.2s;" title="Speak to Type">${ICONS.mic}</button>
           <button id="simplix-chat-send" style="background:var(--accent); color:var(--accentText); border:none; padding:0 12px; border-radius:6px; cursor:pointer;">${ICONS.send}</button>
       </div>
   `;
@@ -809,6 +811,53 @@ function showFloatingChat(contextText) {
   const relevantBtn = popup.querySelector('#chat-mode-relevant');
   const generalBtn = popup.querySelector('#chat-mode-general');
   const minimizeBtn = popup.querySelector('#chat-minimize');
+
+  // --- SPEECH RECOGNITION LOGIC START ---
+  const micBtn = popup.querySelector('#simplix-chat-mic');
+  
+  if ('webkitSpeechRecognition' in window) {
+      const recognition = new webkitSpeechRecognition();
+      recognition.continuous = false; // Stops after one sentence
+      recognition.interimResults = false; // Only show final result
+      recognition.lang = 'en-US';
+
+      micBtn.onclick = () => {
+          if (micBtn.classList.contains('listening')) {
+              recognition.stop();
+          } else {
+              recognition.start();
+          }
+      };
+
+      recognition.onstart = () => {
+          micBtn.classList.add('listening');
+          micBtn.style.color = "#ef4444"; // Turn red when listening
+          micBtn.style.borderColor = "#ef4444";
+          inputEl.placeholder = "Listening...";
+      };
+
+      recognition.onend = () => {
+          micBtn.classList.remove('listening');
+          micBtn.style.color = "var(--subText)";
+          micBtn.style.borderColor = "var(--border)";
+          inputEl.placeholder = chatMode === 'relevant' ? "Ask strict questions about text..." : "Ask general questions...";
+      };
+
+      recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          // Appends text so user can speak multiple times or edit before sending
+          inputEl.value = (inputEl.value ? inputEl.value + " " : "") + transcript;
+          inputEl.focus();
+      };
+
+      recognition.onerror = (event) => {
+          console.error("Speech error:", event.error);
+          micBtn.classList.remove('listening');
+      };
+  } else {
+      micBtn.style.display = 'none'; // Hide button if browser doesn't support it
+  }
+  // --- SPEECH RECOGNITION LOGIC END ---
 
   const toggleMin = () => { popup.classList.toggle('sx-minimized'); };
   minimizeBtn.onclick = (e) => { e.stopPropagation(); toggleMin(); };
