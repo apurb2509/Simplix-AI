@@ -29,6 +29,12 @@ const ICONS = {
   close: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
   copy: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`,
   mic: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>`,
+  notebook: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`,
+  bookmark: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>`,
+  trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`,
+  edit: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`,
+  back: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>`,
+  highlighter: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h9l3-3"></path><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"></path></svg>`,
   minimize: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
   move: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><circle cx="12" cy="12" r="1"></circle></svg>`,
   theme: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>`,
@@ -88,7 +94,7 @@ const THEMES = {
   }
 };
 
-// --- Internal CSS Injection (FIXED) ---
+// --- Internal CSS Injection (FINAL UI POLISH) ---
 function injectStyles() {
   let style = document.getElementById('simplix-global-styles');
   if (!style) {
@@ -100,99 +106,113 @@ function injectStyles() {
   style.textContent = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
-    #simplix-sidebar, #simplix-result-overlay, #simplix-chat-popup { font-family: 'Inter', sans-serif; box-sizing: border-box; }
-    #simplix-sidebar *, #simplix-result-overlay *, #simplix-chat-popup * { box-sizing: border-box; }
+    #simplix-sidebar, #simplix-result-overlay, #simplix-chat-popup, #sx-save-modal { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+    #simplix-sidebar *, #simplix-result-overlay *, #simplix-chat-popup *, #sx-save-modal * { box-sizing: border-box; }
     
-    /* Buttons */
-    .sx-btn-icon { background: transparent; border: none; cursor: pointer; color: var(--subText); padding: 6px; border-radius: 6px; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; }
+    /* --- MODAL FIXES --- */
+    #sx-save-modal { 
+      background-color: var(--cardBg) !important; 
+      border: 1px solid var(--border); 
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important; 
+      opacity: 1 !important;
+      backdrop-filter: none !important;
+      z-index: 2147483670 !important;
+    }
+
+    /* --- PRIORITY DOT SELECTOR (UPDATED) --- */
+    .sx-priority-container { display: flex; justify-content: center; gap: 24px; margin-top: 15px; }
+    .sx-dot-input { display: none; }
+    
+    .sx-dot-label { 
+      display: flex; flex-direction: column; align-items: center; gap: 8px; 
+      cursor: pointer; position: relative;
+    }
+    
+    .sx-dot-circle {
+      width: 24px; height: 24px; border-radius: 50%; 
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy pop */
+      position: relative;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    /* Hover: Pop Up */
+    .sx-dot-label:hover .sx-dot-circle { transform: scale(1.15); }
+    
+    /* SELECTED STATE: Bigger & Thick Dark Ring */
+    .sx-dot-input:checked + .sx-dot-circle {
+      transform: scale(1.35); /* Distinctly Bigger */
+      /* Ring: 3px gap (cardBg) + 3px thick dark border (text color) */
+      box-shadow: 0 0 0 3px var(--cardBg), 0 0 0 6px var(--text); 
+      z-index: 2;
+    }
+    
+    .sx-dot-text { font-size: 10px; font-weight: 600; color: var(--subText); transition: 0.2s; }
+    .sx-dot-input:checked ~ .sx-dot-text { color: var(--text); font-weight: 800; transform: translateY(2px); }
+
+    /* --- STANDARD STYLES --- */
+    .sx-btn-icon { background: transparent; border: none; cursor: pointer; color: var(--subText); padding: 6px; border-radius: 6px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
     .sx-btn-icon:hover { background: var(--border); color: var(--text); }
     
-    .sx-card { background: var(--cardBg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; transition: all 0.3s ease; }
+    .sx-card { background: var(--cardBg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; }
     .sx-label { font-size: 10px; font-weight: 700; color: var(--subText); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px; }
     
     .sx-crop-btn { width: 100%; padding: 12px; background: transparent; border: 1px dashed var(--border); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 13px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .sx-crop-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--cardBg); }
-    .sx-crop-btn.active { border-style: solid; border-color: var(--accent); background: var(--bg); color: var(--accent); }
+    .sx-crop-btn:hover, .sx-crop-btn.active { border-color: var(--accent); color: var(--accent); background: var(--bg); }
 
-    /* Copy Button in Chat */
-.sx-chat-msg { position: relative; } /* Ensure parent is relative */
-.sx-chat-copy-btn {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    background: rgba(255,255,255,0.2); 
-    border: none;
-    border-radius: 4px;
-    padding: 4px;
-    cursor: pointer;
-    color: inherit;
-    opacity: 0.6;
-    transition: 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.sx-chat-copy-btn:hover { opacity: 1; background: rgba(255,255,255,0.4); }
-
-    /* Mode Buttons - Strict Contrast */
-    .sx-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .sx-mode-btn { padding: 8px 10px; border: 1px solid transparent; background: var(--bg); border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--subText); transition: all 0.2s; text-align: center; }
-    .sx-mode-btn:hover { background: var(--border); color: var(--text); }
-    .sx-mode-btn.active { background: var(--accent); color: var(--accentText) !important; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-color: var(--accent); }
-    
     .sx-gen-btn { width: 100%; padding: 14px; background: var(--accent); color: var(--accentText); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .sx-gen-btn:hover { background: var(--accentHover); transform: translateY(-1px); }
+
+    .sx-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sx-mode-btn { padding: 8px 10px; border: 1px solid transparent; background: var(--bg); border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--subText); transition: all 0.2s; text-align: center; }
+    .sx-mode-btn:hover, .sx-mode-btn.active { background: var(--accent); color: var(--accentText) !important; border-color: var(--accent); font-weight: 700; }
+
+    /* Notebook Button */
+    .sx-notebook-btn { width: 100%; margin: 20px 0; padding: 14px; border: 2px solid var(--border); background: var(--bg); color: var(--text); border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; font-size: 14px; transition: all 0.2s; }
+    .sx-notebook-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+    /* Notebook Cards */
+    .sx-note-card { background: var(--cardBg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
+    .sx-note-card:hover { transform: translateY(-2px); border-color: var(--accent); }
     
-    /* Draggable Header Styling */
+    /* Tiny dots in list view */
+    .sx-priority-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .priority-green { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+    .priority-blue { background: #3b82f6; box-shadow: 0 0 5px #3b82f6; }
+    .priority-yellow { background: #eab308; box-shadow: 0 0 5px #eab308; }
+
+    /* Contrast Fixes */
+    #simplix-result-content span[style*="background-color"] { color: #000000 !important; }
+
+    /* Layouts */
     .sx-drag-header { cursor: move; user-select: none; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--border); border-radius: 12px 12px 0 0; }
-    
-    /* Minimize State */
-    .sx-minimized { width: 48px !important; height: 48px !important; overflow: hidden; border-radius: 50% !important; background: var(--accent) !important; border: 2px solid var(--accentText) !important; box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important; cursor: pointer; padding: 0 !important; display: flex !important; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: none !important; }
+    .sx-minimized { width: 48px !important; height: 48px !important; overflow: hidden; border-radius: 50% !important; background: var(--accent) !important; border: 2px solid var(--accentText) !important; cursor: pointer; padding: 0 !important; display: flex !important; align-items: center; justify-content: center; }
     .sx-minimized * { display: none !important; }
-    .sx-minimized::after { content: ''; width: 20px; height: 20px; background-color: var(--accentText); mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 15.5v.01"></path><path d="M12 12v.01"></path></svg>') no-repeat center; mask-size: contain; -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 15.5v.01"></path><path d="M12 12v.01"></path></svg>') no-repeat center; -webkit-mask-size: contain; display: block; }
-    
-    /* Chat CSS - FIXED DIMENSIONS ADDED HERE */
-    #simplix-chat-popup {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 340px;
-      height: 500px;
-      display: flex;
-      flex-direction: column;
-      z-index: 2147483650;
-      background: var(--cardBg);
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-      border-radius: 12px;
-      
-      transform: translateY(20px); 
-      opacity: 0; 
-      pointer-events: none; 
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    
+    .sx-minimized::after { content: ''; width: 20px; height: 20px; background-color: var(--accentText); mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 15.5v.01"></path><path d="M12 12v.01"></path></svg>') no-repeat center; -webkit-mask-size: contain; display: block; }
+
+    /* Chat & Scrollbars */
+    #simplix-chat-popup { position: fixed; bottom: 20px; right: 20px; width: 340px; height: 500px; display: flex; flex-direction: column; z-index: 2147483650; background: var(--cardBg); border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.25); border-radius: 12px; transform: translateY(20px); opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     #simplix-chat-popup.visible { transform: translateY(0); opacity: 1; pointer-events: auto; }
-    
-    .sx-chat-msg { margin-bottom: 12px; max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+    .sx-chat-msg { margin-bottom: 12px; max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; position: relative; }
     .sx-chat-user { background: var(--chatUserBg); color: var(--accentText); margin-left: auto; border-bottom-right-radius: 2px; }
     .sx-chat-bot { background: var(--chatBotBg); color: var(--text); margin-right: auto; border-bottom-left-radius: 2px; border: 1px solid var(--border); }
-    
+    .sx-chat-copy-btn { position: absolute; bottom: 4px; right: 4px; background: rgba(255,255,255,0.2); border: none; border-radius: 4px; padding: 4px; cursor: pointer; color: inherit; opacity: 0.6; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+    .sx-chat-copy-btn:hover { opacity: 1; background: rgba(255,255,255,0.4); }
     .sx-chat-mode-btn { font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--subText); cursor: pointer; font-weight: 600; position: relative; }
     .sx-chat-mode-btn.active { background: var(--accent); color: var(--accentText) !important; border-color: var(--accent); }
-    
-    /* Tooltips */
     .sx-chat-mode-btn::before { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding: 6px 10px; background: #222; color: #fff; font-size: 10px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.2s; margin-bottom: 6px; font-weight: 400; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999; }
     .sx-chat-mode-btn:hover::before { opacity: 1; }
+    
+    .sx-highlight-bar { position: sticky; top: 0; background: var(--cardBg); border-bottom: 1px solid var(--border); padding: 8px; display: flex; gap: 8px; z-index: 10; margin: -16px -16px 16px -16px; border-radius: 12px 12px 0 0; align-items: center; justify-content: center; }
+    .sx-color-btn { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; }
+    .sx-color-btn:hover { transform: scale(1.2); }
 
-    /* Scrollbars & Isolation */
     #simplix-result-content { overscroll-behavior: contain; }
     #simplix-result-content::-webkit-scrollbar, #simplix-chat-history::-webkit-scrollbar { width: 6px; }
     #simplix-result-content::-webkit-scrollbar-track, #simplix-chat-history::-webkit-scrollbar-track { background: transparent; }
     #simplix-result-content::-webkit-scrollbar-thumb, #simplix-chat-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     #simplix-result-content::-webkit-scrollbar-thumb:hover { background: var(--subText); }
 
-    @keyframes sx-slide-in { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes sx-slide-in { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @keyframes sx-pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
   `;
 }
@@ -221,44 +241,47 @@ function toggleSidebar() {
   applySidebarStyles(sidebarEl);
   
   sidebarEl.innerHTML = `
-    <div class="sx-drag-header">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <div style="cursor:move; color:var(--accent); display:flex;">${ICONS.move}</div>
-        <span style="font-weight:700; font-size:14px; color:var(--text);">Simplix AI</span>
-      </div>
-      <div style="display:flex; gap:4px;">
-         <button id="sb-min" class="sx-btn-icon" title="Minimize">${ICONS.minimize}</button>
-         <button id="sb-theme-toggle" class="sx-btn-icon" title="Change Theme">${ICONS.theme}</button>
-         <button id="sb-close" class="sx-btn-icon" title="Close">${ICONS.close}</button>
-      </div>
+  <div class="sx-drag-header">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <div style="cursor:move; color:var(--accent); display:flex;">${ICONS.move}</div>
+      <span style="font-weight:700; font-size:14px; color:var(--text);">Simplix AI</span>
     </div>
-
-    <div style="padding: 0 24px 24px 24px; display:flex; flex-direction:column; height: calc(100% - 50px); overflow-y:auto;">
-        <div style="margin-top:16px;" class="sx-card">
-          <div class="sx-label"><span>1</span> Content Source</div>
-          <button id="sb-crop-btn" class="sx-crop-btn">${ICONS.crop} Select Area</button>
-          <div id="sb-crop-status" style="font-size:11px; color:var(--accent); margin-top:8px; display:none; font-weight:600; text-align:center; align-items:center; justify-content:center; gap:4px;">
-            ${ICONS.check} Area Selected
-          </div>
-        </div>
-
-        <div class="sx-card">
-          <div class="sx-label"><span>2</span> Output Mode</div>
-          <div class="sx-mode-grid">
-            ${createModeBtn('kid-friendly', 'Kid Friendly')}
-            ${createModeBtn('story', 'Story Mode')}
-            ${createModeBtn('exam', 'Exam Gen')}
-            ${createModeBtn('step-by-step', 'Step-by-Step')}
-            ${createModeBtn('summary', 'Summary')}
-            ${createModeBtn('formal', 'Formal')}
-          </div>
-        </div>
-
-        <div style="margin-top:auto; padding-top:20px;">
-          <button id="sb-generate-btn" class="sx-gen-btn">${ICONS.magic} <span>Generate Result</span></button>
-        </div>
+    <div style="display:flex; gap:4px;">
+       <button id="sb-min" class="sx-btn-icon" title="Minimize">${ICONS.minimize}</button>
+       <button id="sb-theme-toggle" class="sx-btn-icon" title="Change Theme">${ICONS.theme}</button>
+       <button id="sb-close" class="sx-btn-icon" title="Close">${ICONS.close}</button>
     </div>
-  `;
+  </div>
+
+  <div style="padding: 0 24px 24px 24px; display:flex; flex-direction:column; height: calc(100% - 50px); overflow-y:auto;">
+      
+      <div style="margin-top:16px;" class="sx-card">
+        <div class="sx-label"><span>1</span> Content Source</div>
+        <button id="sb-crop-btn" class="sx-crop-btn">${ICONS.crop} Select Area</button>
+        <div id="sb-crop-status" style="font-size:11px; color:var(--accent); margin-top:8px; display:none; font-weight:600; text-align:center; align-items:center; justify-content:center; gap:4px;">
+          ${ICONS.check} Area Selected
+        </div>
+      </div>
+
+      <div class="sx-card">
+        <div class="sx-label"><span>2</span> Output Mode</div>
+        <div class="sx-mode-grid">
+          ${createModeBtn('kid-friendly', 'Kid Friendly')}
+          ${createModeBtn('story', 'Story Mode')}
+          ${createModeBtn('exam', 'Exam Gen')}
+          ${createModeBtn('step-by-step', 'Step-by-Step')}
+          ${createModeBtn('summary', 'Summary')}
+          ${createModeBtn('formal', 'Formal')}
+        </div>
+      </div>
+
+      <button id="sb-notebook-btn" class="sx-notebook-btn">${ICONS.notebook} Open My Notebook</button>
+
+      <div style="margin-top:auto;">
+        <button id="sb-generate-btn" class="sx-gen-btn">${ICONS.magic} <span>Generate Result</span></button>
+      </div>
+  </div>
+`;
 
   document.body.appendChild(sidebarEl);
   makeDraggable(sidebarEl, sidebarEl.querySelector('.sx-drag-header'));
@@ -268,6 +291,7 @@ function toggleSidebar() {
   sidebarEl.querySelector('#sb-min').onclick = (e) => { e.stopPropagation(); toggleMinimize(sidebarEl); };
   sidebarEl.querySelector('#sb-crop-btn').onclick = toggleCropTool;
   sidebarEl.querySelector('#sb-theme-toggle').onclick = cycleTheme;
+  sidebarEl.querySelector('#sb-notebook-btn').onclick = openNotebookView;
   const genBtn = sidebarEl.querySelector('#sb-generate-btn');
   genBtn.onclick = handleGenerateClick;
 
@@ -673,7 +697,7 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
   else if (modelData?.data?.choices) contentRaw = modelData.data.choices[0].message.content;
   else contentRaw = JSON.stringify(modelData);
 
-  // 4. Construct HTML
+  // 4. Construct HTML (FIXED)
   let html = `
     <div class="sx-drag-header">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -683,6 +707,7 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
         </div>
       </div>
       <div style="display:flex; gap:4px;">
+        <button id="res-save" class="sx-btn-icon" title="Save to Notebook">${ICONS.bookmark}</button>
         <button id="res-copy" class="sx-btn-icon" title="Copy Content">${ICONS.copy}</button>
         <button id="res-min" class="sx-btn-icon" title="Minimize">${ICONS.minimize}</button>
         <button id="res-close" class="sx-btn-icon" title="Close">${ICONS.close}</button>
@@ -720,6 +745,16 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
   
   // 5. Add Functionality
   makeDraggable(overlay, overlay.querySelector('.sx-drag-header'));
+
+  // --- NEW: Save Logic ---
+  const saveBtn = overlay.querySelector('#res-save');
+  if (saveBtn) {
+      saveBtn.onclick = (e) => {
+          e.stopPropagation();
+          const contentHTML = overlay.querySelector('#simplix-result-content').innerHTML;
+          showSaveModal(saveBtn, contentHTML, mode); 
+      };
+  }
   
   overlay.querySelector('#res-close').onclick = () => { overlay.remove(); if(chatPopupTimer) clearTimeout(chatPopupTimer); const p = document.getElementById('simplix-chat-popup'); if(p) p.remove(); };
   overlay.querySelector('#res-min').onclick = (e) => { e.stopPropagation(); toggleMinimize(overlay); };
@@ -732,14 +767,13 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
           const textToCopy = contentDiv.innerText;
           
           navigator.clipboard.writeText(textToCopy).then(() => {
-              // Visual Feedback
               const originalIcon = copyBtn.innerHTML;
-              copyBtn.innerHTML = ICONS.check; // Changes to checkmark
+              copyBtn.innerHTML = ICONS.check; 
               copyBtn.style.color = "var(--accent)";
               
               setTimeout(() => { 
-                  copyBtn.innerHTML = originalIcon; // Revert icon
-                  copyBtn.style.color = ""; // Revert color
+                  copyBtn.innerHTML = originalIcon; 
+                  copyBtn.style.color = ""; 
               }, 1500);
           }).catch(err => {
               console.error('Failed to copy text: ', err);
@@ -1060,6 +1094,362 @@ function attachExamListeners(overlay, t) {
       btn.onmouseenter = () => { if(!answered) btn.style.borderColor = getComputedStyle(overlay).getPropertyValue('--accent'); };
       btn.onmouseleave = () => { if(!answered) btn.style.borderColor = getComputedStyle(overlay).getPropertyValue('--border'); };
     });
+  });
+}
+
+// ==========================================
+// --- NOTEBOOK & STORAGE SYSTEM ---
+// ==========================================
+// 1. Show Save Modal (Final UI: Dots & Opaque)
+function showSaveModal(triggerBtn, content, mode) {
+  if(document.getElementById('sx-save-modal')) return;
+
+  const t = THEMES[currentTheme];
+  const modal = document.createElement('div');
+  modal.id = 'sx-save-modal';
+  
+  // Inject theme variables for children
+  modal.style.setProperty('--cardBg', t.cardBg);
+  modal.style.setProperty('--text', t.text);
+  modal.style.setProperty('--subText', t.subText);
+  modal.style.setProperty('--accent', t.accent);
+  modal.style.setProperty('--border', t.border);
+  modal.style.setProperty('--bg', t.bg);
+
+  // Layout & Positioning
+  modal.style.cssText = `
+      position: fixed; top: 0; left: 0; width: 280px;
+      background-color: ${t.cardBg} !important; /* Force Solid */
+      border: 1px solid ${t.border};
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6) !important;
+      z-index: 2147483660;
+      display: flex; flex-direction: column; gap: 16px;
+      font-family: 'Inter', sans-serif;
+      animation: sx-fade-up 0.2s ease-out forwards;
+  `;
+
+  modal.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:800; font-size:14px; color:${t.text};">Save to Notebook</span>
+          <button id="modal-cancel" class="sx-btn-icon">${ICONS.close}</button>
+      </div>
+
+      <div>
+          <label style="font-size:11px; font-weight:700; color:${t.subText}; text-transform:uppercase; display:block; margin-bottom:8px;">Title</label>
+          <input type="text" id="note-name" value="${mode.charAt(0).toUpperCase() + mode.slice(1)} Result" 
+              style="width:100%; padding:10px; border-radius:8px; border:2px solid ${t.border}; outline:none; background:${t.bg}; color:${t.text}; font-size:14px; font-weight:600; font-family:inherit;">
+      </div>
+      
+      <div>
+          <label style="font-size:11px; font-weight:700; color:${t.subText}; text-transform:uppercase; display:block; margin-bottom:8px;">Priority Status</label>
+          
+          <div class="sx-priority-container">
+              <label class="sx-dot-label">
+                  <input type="radio" name="priority" value="yellow" class="sx-dot-input">
+                  <div class="sx-dot-circle" style="background-color:#eab308; color:#eab308;"></div>
+                  <span class="sx-dot-text">Low</span>
+              </label>
+
+              <label class="sx-dot-label">
+                  <input type="radio" name="priority" value="blue" class="sx-dot-input" checked>
+                  <div class="sx-dot-circle" style="background-color:#3b82f6; color:#3b82f6;"></div>
+                  <span class="sx-dot-text">Med</span>
+              </label>
+
+              <label class="sx-dot-label">
+                  <input type="radio" name="priority" value="green" class="sx-dot-input">
+                  <div class="sx-dot-circle" style="background-color:#22c55e; color:#22c55e;"></div>
+                  <span class="sx-dot-text">High</span>
+              </label>
+          </div>
+      </div>
+
+      <button id="confirm-save" style="margin-top:8px; width:100%; background:${t.accent}; color:${t.accentText}; border:none; padding:12px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:${t.shadow}; transition:transform 0.1s;">
+          Save Note
+      </button>
+  `;
+
+  // Position logic
+  const rect = triggerBtn.getBoundingClientRect();
+  modal.style.top = (rect.bottom + 12) + 'px';
+  modal.style.left = Math.max(20, rect.left - 240) + 'px';
+
+  document.body.appendChild(modal);
+
+  const input = modal.querySelector('#note-name');
+  input.focus();
+  input.select();
+
+  modal.querySelector('#confirm-save').onclick = () => {
+      const title = input.value.trim() || "Untitled Note";
+      const priority = modal.querySelector('input[name="priority"]:checked').value;
+      
+      saveNoteToStorage({
+          id: Date.now().toString(),
+          title,
+          content,
+          mode,
+          priority,
+          date: new Date().toLocaleDateString()
+      });
+
+      triggerBtn.innerHTML = ICONS.check;
+      triggerBtn.style.color = t.accent;
+      modal.remove();
+      setTimeout(() => { 
+          triggerBtn.innerHTML = ICONS.bookmark; 
+          triggerBtn.style.color = ""; 
+      }, 1500);
+  };
+
+  const close = () => { modal.remove(); document.removeEventListener('mousedown', outsideClick); };
+  modal.querySelector('#modal-cancel').onclick = close;
+  const outsideClick = (e) => { if (!modal.contains(e.target) && e.target !== triggerBtn) close(); };
+  document.addEventListener('mousedown', outsideClick);
+}
+
+// 2. Storage Helper
+function saveNoteToStorage(note) {
+  chrome.storage.local.get(['simplix_notes'], (result) => {
+      const notes = result.simplix_notes || [];
+      notes.unshift(note); // Add to top
+      chrome.storage.local.set({ simplix_notes: notes });
+  });
+}
+
+// 3. Render Notebook View (Replaces Sidebar Content)
+function openNotebookView() {
+  if (!sidebarEl) return;
+  const contentArea = sidebarEl.querySelector('div[style*="padding: 0 24px"]'); // The main content div
+  const originalContent = contentArea.innerHTML; // Cache generator view if needed, or just rebuild it later. We'll rebuild.
+
+  contentArea.innerHTML = `
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+          <button id="nb-back" class="sx-btn-icon">${ICONS.back}</button>
+          <span style="font-weight:700; color:var(--text);">My Notebook</span>
+      </div>
+      <div id="nb-list" style="display:flex; flex-direction:column; gap:8px;">
+          <div style="text-align:center; padding:20px; color:var(--subText); font-size:12px;">Loading notes...</div>
+      </div>
+  `;
+
+  // Load Notes
+  chrome.storage.local.get(['simplix_notes'], (result) => {
+      const notes = result.simplix_notes || [];
+      const listEl = contentArea.querySelector('#nb-list');
+      listEl.innerHTML = "";
+
+      if (notes.length === 0) {
+          listEl.innerHTML = `<div style="text-align:center; padding:20px; color:var(--subText); font-size:13px;">No saved notes yet.<br>Generate a result and click the bookmark icon!</div>`;
+          return;
+      }
+
+      notes.forEach(note => {
+          const card = document.createElement('div');
+          card.className = 'sx-note-card';
+          card.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+                  <div style="font-weight:600; font-size:13px; color:var(--text); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:180px;">
+                      <span class="sx-priority-dot priority-${note.priority}"></span>${note.title}
+                  </div>
+                  <div style="font-size:10px; color:var(--subText);">${note.date}</div>
+              </div>
+              <div style="font-size:11px; color:var(--subText); display:flex; gap:6px;">
+                  <span style="background:var(--bg); padding:2px 6px; border-radius:4px; border:1px solid var(--border);">${note.mode}</span>
+              </div>
+              <div style="margin-top:8px; display:flex; justify-content:flex-end; gap:4px;">
+                   <button class="sx-btn-icon note-del" style="padding:4px;" data-id="${note.id}">${ICONS.trash}</button>
+              </div>
+          `;
+          
+          // Open Note
+          card.onclick = (e) => { 
+              if(!e.target.closest('.note-del')) renderNoteDetails(note); 
+          };
+          
+          // Delete Note
+          card.querySelector('.note-del').onclick = (e) => {
+              e.stopPropagation();
+              if(confirm("Delete this note?")) {
+                  const newNotes = notes.filter(n => n.id !== note.id);
+                  chrome.storage.local.set({ simplix_notes: newNotes }, openNotebookView); // Reload list
+              }
+          };
+          
+          listEl.appendChild(card);
+      });
+  });
+
+  // Back Button Logic
+  contentArea.querySelector('#nb-back').onclick = () => {
+      // Re-render the original sidebar UI (Generator Mode)
+      sidebarEl.remove(); 
+      sidebarEl = null; 
+      toggleSidebar(); 
+  };
+}
+
+// 4. Render Note Details (With Tooltips)
+function renderNoteDetails(note) {
+  let overlay = document.getElementById('simplix-result-overlay');
+  if(overlay) overlay.remove();
+
+  overlay = document.createElement('div');
+  overlay.id = 'simplix-result-overlay';
+  const t = THEMES[currentTheme];
+  
+  // Apply Styles
+  overlay.style = `position: fixed; top: 5%; left: 50%; width: 65%; height: 85vh; transform: translateX(-50%); background: ${t.cardBg}; z-index: 2147483648; box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5); border-radius: 16px; border: 1px solid ${t.border}; display: flex; flex-direction: column; overflow: hidden; font-family: 'Inter', sans-serif; animation: sx-fade-up 0.3s ease-out forwards;`;
+  overlay.style.setProperty('--bg', t.bg);
+  overlay.style.setProperty('--cardBg', t.cardBg);
+  overlay.style.setProperty('--text', t.text);
+  overlay.style.setProperty('--accent', t.accent);
+  overlay.style.setProperty('--accentText', t.accentText);
+  overlay.style.setProperty('--border', t.border);
+
+  // Header with Title Input and Priority Toggles
+  // --- ADDED TOOLTIPS TO BUTTONS HERE ---
+  overlay.innerHTML = `
+      <div class="sx-drag-header" style="background:var(--bg); border-bottom:1px solid var(--border); padding: 12px 20px;">
+           <div style="display:flex; align-items:center; gap:12px; flex-grow:1;">
+              <div style="cursor:move; color:var(--accent); display:flex;">${ICONS.move}</div>
+              
+              <input id="note-edit-title" type="text" value="${note.title}" style="background:transparent; border:1px solid transparent; border-bottom:1px dashed var(--subText); padding:4px; font-weight:700; font-size:16px; color:var(--text); width:100%; outline:none; transition:0.2s;" placeholder="Note Title">
+              
+              <button id="note-title-save" class="sx-btn-icon" style="display:none; color:var(--accent);" title="Save Title">${ICONS.check}</button>
+           </div>
+
+           <div style="display:flex; align-items:center; gap:12px; margin-left:20px;">
+              <div style="display:flex; gap:4px; background:var(--cardBg); padding:4px; border-radius:20px; border:1px solid var(--border);">
+                  <button class="sx-priority-btn" data-p="yellow" title="Double Click to change priority status" style="width:12px; height:12px; border-radius:50%; background:#eab308; border:2px solid ${note.priority === 'yellow' ? 'var(--text)' : 'transparent'}; cursor:pointer;"></button>
+                  <button class="sx-priority-btn" data-p="blue" title="Double Click to change priority status" style="width:12px; height:12px; border-radius:50%; background:#3b82f6; border:2px solid ${note.priority === 'blue' ? 'var(--text)' : 'transparent'}; cursor:pointer;"></button>
+                  <button class="sx-priority-btn" data-p="green" title="Double Click to change priority status" style="width:12px; height:12px; border-radius:50%; background:#22c55e; border:2px solid ${note.priority === 'green' ? 'var(--text)' : 'transparent'}; cursor:pointer;"></button>
+              </div>
+              
+              <div style="width:1px; height:20px; background:var(--border);"></div>
+              <button id="res-close" class="sx-btn-icon" title="Close">${ICONS.close}</button>
+           </div>
+      </div>
+
+      <div style="position:relative; flex-grow:1; overflow:hidden; display:flex; flex-direction:column;">
+          <div class="sx-highlight-bar">
+              <span style="font-size:10px; font-weight:600; color:var(--subText);">${ICONS.highlighter} Highlight:</span>
+              <button class="sx-color-btn" style="background:#fef08a;" data-col="#fef08a"></button> 
+              <button class="sx-color-btn" style="background:#bbf7d0;" data-col="#bbf7d0"></button> 
+              <button class="sx-color-btn" style="background:#bfdbfe;" data-col="#bfdbfe"></button> 
+              <button class="sx-color-btn" style="background:#fbcfe8;" data-col="#fbcfe8"></button> 
+              <button class="sx-color-btn" style="background:#e5e7eb;" data-col="transparent" title="Clear"></button>
+          </div>
+
+          <div id="simplix-result-content" contenteditable="true" style="padding:20px 40px 80px 40px; overflow-y:auto; line-height:1.7; color:var(--text); font-size:16px; background:var(--bg); outline:none;">
+              ${note.content}
+          </div>
+
+          <button id="note-content-save" style="display:none; position:absolute; bottom:20px; right:30px; background:var(--accent); color:var(--accentText); border:none; padding:10px 20px; border-radius:30px; font-weight:600; font-size:13px; box-shadow:0 4px 12px rgba(0,0,0,0.2); cursor:pointer; animation:sx-slide-in 0.2s; z-index:100;">
+              ${ICONS.check} Save Changes
+          </button>
+      </div>
+  `;
+
+  document.body.appendChild(overlay);
+  makeDraggable(overlay, overlay.querySelector('.sx-drag-header'));
+  
+  // 1. Close
+  overlay.querySelector('#res-close').onclick = () => overlay.remove();
+
+  // 2. Renaming Logic
+  const titleInput = overlay.querySelector('#note-edit-title');
+  const titleSaveBtn = overlay.querySelector('#note-title-save');
+  
+  titleInput.oninput = () => { 
+      titleInput.style.borderColor = 'var(--accent)'; 
+      titleSaveBtn.style.display = 'flex';
+  };
+  
+  const saveTitle = () => {
+      const newTitle = titleInput.value.trim() || "Untitled";
+      updateNote(note.id, { title: newTitle });
+      titleInput.style.borderColor = 'transparent';
+      titleSaveBtn.style.display = 'none';
+      openNotebookView(); // Refresh sidebar list
+  };
+
+  titleSaveBtn.onclick = saveTitle;
+  titleInput.onkeydown = (e) => { if(e.key === 'Enter') { saveTitle(); titleInput.blur(); } };
+
+  // 3. Priority Logic
+  overlay.querySelectorAll('.sx-priority-btn').forEach(btn => {
+      btn.onclick = () => {
+          // Update UI immediately
+          overlay.querySelectorAll('.sx-priority-btn').forEach(b => b.style.border = '2px solid transparent');
+          btn.style.border = '2px solid var(--text)';
+          // Update Storage
+          updateNote(note.id, { priority: btn.dataset.p });
+          openNotebookView(); // Refresh sidebar list
+      };
+  });
+
+  // 4. Content Save Logic
+  const contentDiv = overlay.querySelector('#simplix-result-content');
+  const contentSaveBtn = overlay.querySelector('#note-content-save');
+
+  contentDiv.addEventListener('input', () => { contentSaveBtn.style.display = 'flex'; });
+
+  contentSaveBtn.onclick = () => {
+      updateNote(note.id, { content: contentDiv.innerHTML });
+      contentSaveBtn.innerHTML = `${ICONS.check} Saved`;
+      setTimeout(() => {
+          contentSaveBtn.style.display = 'none';
+          contentSaveBtn.innerHTML = `${ICONS.check} Save Changes`;
+      }, 1000);
+  };
+
+  // 5. Highlighter Logic (Fixed for High Contrast)
+  overlay.querySelectorAll('.sx-color-btn').forEach(btn => {
+      btn.onclick = (e) => {
+          e.preventDefault();
+          const color = btn.dataset.col;
+          const selection = window.getSelection();
+          if (!selection.rangeCount || selection.isCollapsed) return; // Guard clause
+
+          const range = selection.getRangeAt(0);
+          const span = document.createElement("span");
+          
+          if (color !== 'transparent') {
+              span.style.backgroundColor = color;
+              span.style.color = "#000000"; // Always black text on highlight
+              span.style.borderRadius = "2px";
+              span.style.padding = "0 2px";
+              span.style.boxDecorationBreak = "clone";
+              span.style.webkitBoxDecorationBreak = "clone";
+          }
+
+          try {
+              if (color === 'transparent') {
+                  document.execCommand('removeFormat', false, null);
+              } else {
+                  range.surroundContents(span);
+              }
+          } catch (e) {
+              document.execCommand('hiliteColor', false, color);
+          }
+          
+          selection.removeAllRanges();
+          contentSaveBtn.style.display = 'flex'; // Trigger save btn
+      };
+  });
+}
+
+function updateNote(id, updates) {
+  chrome.storage.local.get(['simplix_notes'], (result) => {
+      let notes = result.simplix_notes || [];
+      const index = notes.findIndex(n => n.id === id);
+      if (index !== -1) {
+          notes[index] = { ...notes[index], ...updates };
+          chrome.storage.local.set({ simplix_notes: notes });
+      }
   });
 }
 
