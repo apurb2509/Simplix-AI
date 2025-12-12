@@ -1,9 +1,10 @@
-/* content.js — FINAL STABLE VERSION (FIXED JSON PARSER + MOONSHOT BOT) */
+/* content.js — FINAL STABLE VERSION (FIXED EXAM CRASH + DRAGGABLE + CHATBOT) */
 
 // --- GUARD CLAUSE ---
 if (window.simplixHasRun) {
-  toggleSidebar();
-  throw new Error("Simplix already running: Toggled sidebar.");
+  const sb = document.getElementById('simplix-sidebar');
+  if (sb) toggleSidebar();
+  throw new Error("Simplix already running.");
 }
 window.simplixHasRun = true;
 
@@ -26,20 +27,21 @@ let chatPopupTimer = null;
 const ICONS = {
   logo: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 15.5v.01"></path><path d="M12 12v.01"></path></svg>`,
   close: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
+  minimize: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
+  move: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><circle cx="12" cy="12" r="1"></circle></svg>`,
   theme: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>`,
   crop: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"></path><path d="M18 22V8a2 2 0 0 0-2-2H2"></path></svg>`,
   check: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
   magic: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>`,
   bot: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><rect x="4" y="8" width="16" height="12" rx="2"></rect><path d="M8 14h.01"></path><path d="M16 14h.01"></path></svg>`,
-  send: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`,
-  minimize: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline></svg>`
+  send: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`
 };
 
 // --- Theme Definitions ---
 const THEMES = {
   blue: {
     bg: "linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%)",
-    sidebarBg: "rgba(240, 249, 255, 0.95)", 
+    sidebarBg: "rgba(240, 249, 255, 0.98)", 
     text: "#0c4a6e", 
     subText: "#64748b",
     accent: "#0284c7", 
@@ -69,7 +71,7 @@ const THEMES = {
   },
   dark: {
     bg: "#000000",
-    sidebarBg: "#000000", 
+    sidebarBg: "#0f0f0f", 
     text: "#e2e2e2",
     subText: "#a1a1a1",
     accent: "#ffffff", 
@@ -84,17 +86,22 @@ const THEMES = {
   }
 };
 
-// --- Internal CSS Injection ---
+// --- Internal CSS Injection (FIXED) ---
 function injectStyles() {
-  if (document.getElementById('simplix-global-styles')) return;
-  const style = document.createElement('style');
-  style.id = 'simplix-global-styles';
+  let style = document.getElementById('simplix-global-styles');
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'simplix-global-styles';
+    document.head.appendChild(style);
+  }
+  
   style.textContent = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
-    #simplix-sidebar, #simplix-result-overlay { font-family: 'Inter', sans-serif; box-sizing: border-box; }
-    #simplix-sidebar *, #simplix-result-overlay * { box-sizing: border-box; }
+    #simplix-sidebar, #simplix-result-overlay, #simplix-chat-popup { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+    #simplix-sidebar *, #simplix-result-overlay *, #simplix-chat-popup * { box-sizing: border-box; }
     
+    /* Buttons */
     .sx-btn-icon { background: transparent; border: none; cursor: pointer; color: var(--subText); padding: 6px; border-radius: 6px; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; }
     .sx-btn-icon:hover { background: var(--border); color: var(--text); }
     
@@ -105,63 +112,67 @@ function injectStyles() {
     .sx-crop-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--cardBg); }
     .sx-crop-btn.active { border-style: solid; border-color: var(--accent); background: var(--bg); color: var(--accent); }
     
+    /* Mode Buttons - Strict Contrast */
     .sx-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .sx-mode-btn { padding: 8px 10px; border: 1px solid transparent; background: var(--bg); border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--subText); transition: all 0.2s; text-align: center; }
     .sx-mode-btn:hover { background: var(--border); color: var(--text); }
-    .sx-mode-btn.active { background: var(--accent); color: var(--accentText) !important; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-1px); border-color: var(--accent); }
+    .sx-mode-btn.active { background: var(--accent); color: var(--accentText) !important; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-color: var(--accent); }
     
     .sx-gen-btn { width: 100%; padding: 14px; background: var(--accent); color: var(--accentText); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .sx-gen-btn:hover { background: var(--accentHover); transform: translateY(-1px); }
     
-    /* --- Floating Chatbot CSS --- */
+    /* Draggable Header Styling */
+    .sx-drag-header { cursor: move; user-select: none; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--border); border-radius: 12px 12px 0 0; }
+    
+    /* Minimize State */
+    .sx-minimized { width: 48px !important; height: 48px !important; overflow: hidden; border-radius: 50% !important; background: var(--accent) !important; border: 2px solid var(--accentText) !important; box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important; cursor: pointer; padding: 0 !important; display: flex !important; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: none !important; }
+    .sx-minimized * { display: none !important; }
+    .sx-minimized::after { content: ''; width: 20px; height: 20px; background-color: var(--accentText); mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 15.5v.01"></path><path d="M12 12v.01"></path></svg>') no-repeat center; mask-size: contain; -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 15.5v.01"></path><path d="M12 12v.01"></path></svg>') no-repeat center; -webkit-mask-size: contain; display: block; }
+    
+    /* Chat CSS - FIXED DIMENSIONS ADDED HERE */
     #simplix-chat-popup {
-        position: fixed; bottom: 30px; right: 30px;
-        width: 320px; height: 420px;
-        background: var(--cardBg); border: 1px solid var(--border);
-        border-radius: 12px; box-shadow: 0 10px 40px -5px rgba(0,0,0,0.2);
-        display: flex; flex-direction: column;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 2147483650;
-        transform: translateY(20px); opacity: 0; pointer-events: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 340px;
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      z-index: 2147483650;
+      background: var(--cardBg);
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+      border-radius: 12px;
+      
+      transform: translateY(20px); 
+      opacity: 0; 
+      pointer-events: none; 
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    
     #simplix-chat-popup.visible { transform: translateY(0); opacity: 1; pointer-events: auto; }
-    #simplix-chat-popup.minimized {
-        width: 50px; height: 50px; border-radius: 25px;
-        overflow: hidden; cursor: pointer;
-        background: var(--accent);
-    }
-    #simplix-chat-popup.minimized * { display: none !important; }
-    #simplix-chat-popup.minimized::after {
-        content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-        background-image: url('data:image/svg+xml;utf8,<svg stroke="white" fill="none" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>');
-        background-repeat: no-repeat; background-position: center; background-size: 24px;
-        display: block !important;
-    }
-
+    
     .sx-chat-msg { margin-bottom: 12px; max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
     .sx-chat-user { background: var(--chatUserBg); color: var(--accentText); margin-left: auto; border-bottom-right-radius: 2px; }
     .sx-chat-bot { background: var(--chatBotBg); color: var(--text); margin-right: auto; border-bottom-left-radius: 2px; border: 1px solid var(--border); }
     
     .sx-chat-mode-btn { font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--subText); cursor: pointer; font-weight: 600; position: relative; }
-    .sx-chat-mode-btn.active { background: var(--accent); color: var(--accentText); border-color: var(--accent); }
+    .sx-chat-mode-btn.active { background: var(--accent); color: var(--accentText) !important; border-color: var(--accent); }
     
-    .sx-chat-mode-btn::before {
-        content: attr(data-tooltip);
-        position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-        padding: 6px 10px; background: #222; color: #fff; font-size: 10px; border-radius: 4px;
-        white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.2s; margin-bottom: 6px;
-        font-weight: 400; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+    /* Tooltips */
+    .sx-chat-mode-btn::before { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding: 6px 10px; background: #222; color: #fff; font-size: 10px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.2s; margin-bottom: 6px; font-weight: 400; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999; }
     .sx-chat-mode-btn:hover::before { opacity: 1; }
 
+    /* Scrollbars & Isolation */
+    #simplix-result-content { overscroll-behavior: contain; }
     #simplix-result-content::-webkit-scrollbar, #simplix-chat-history::-webkit-scrollbar { width: 6px; }
     #simplix-result-content::-webkit-scrollbar-track, #simplix-chat-history::-webkit-scrollbar-track { background: transparent; }
     #simplix-result-content::-webkit-scrollbar-thumb, #simplix-chat-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    #simplix-result-content::-webkit-scrollbar-thumb:hover { background: var(--subText); }
 
-    @keyframes sx-fade-up { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+    @keyframes sx-slide-in { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes sx-pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
   `;
-  document.head.appendChild(style);
 }
 
 // --- 1. Message Listener ---
@@ -177,8 +188,8 @@ function toggleSidebar() {
   injectStyles();
   
   if (sidebarEl) {
-    sidebarEl.style.transform = 'translateX(100%)';
-    setTimeout(() => { if(sidebarEl) sidebarEl.remove(); sidebarEl = null; }, 300);
+    sidebarEl.style.opacity = '0';
+    setTimeout(() => { if(sidebarEl) sidebarEl.remove(); sidebarEl = null; }, 200);
     if (cropCleanup) cropCleanup(); 
     return;
   }
@@ -186,54 +197,66 @@ function toggleSidebar() {
   sidebarEl = document.createElement('div');
   sidebarEl.id = 'simplix-sidebar';
   applySidebarStyles(sidebarEl);
+  
   sidebarEl.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="color:var(--accent);">${ICONS.logo}</div>
-        <h2 style="margin:0; font-size:16px; color:var(--text); font-weight:700; letter-spacing:-0.3px;">Simplix AI</h2>
+    <div class="sx-drag-header">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="cursor:move; color:var(--accent); display:flex;">${ICONS.move}</div>
+        <span style="font-weight:700; font-size:14px; color:var(--text);">Simplix AI</span>
       </div>
       <div style="display:flex; gap:4px;">
-        <button id="sb-theme-toggle" class="sx-btn-icon" title="Change Theme">${ICONS.theme}</button>
-        <button id="sb-close" class="sx-btn-icon" title="Close">${ICONS.close}</button>
+         <button id="sb-min" class="sx-btn-icon" title="Minimize">${ICONS.minimize}</button>
+         <button id="sb-theme-toggle" class="sx-btn-icon" title="Change Theme">${ICONS.theme}</button>
+         <button id="sb-close" class="sx-btn-icon" title="Close">${ICONS.close}</button>
       </div>
     </div>
 
-    <div class="sx-card">
-      <div class="sx-label"><span>1</span> Content Source</div>
-      <button id="sb-crop-btn" class="sx-crop-btn">${ICONS.crop} Select Area</button>
-      <div id="sb-crop-status" style="font-size:11px; color:var(--accent); margin-top:8px; display:none; font-weight:600; text-align:center; align-items:center; justify-content:center; gap:4px;">
-        ${ICONS.check} Area Selected
-      </div>
-    </div>
+    <div style="padding: 0 24px 24px 24px; display:flex; flex-direction:column; height: calc(100% - 50px); overflow-y:auto;">
+        <div style="margin-top:16px;" class="sx-card">
+          <div class="sx-label"><span>1</span> Content Source</div>
+          <button id="sb-crop-btn" class="sx-crop-btn">${ICONS.crop} Select Area</button>
+          <div id="sb-crop-status" style="font-size:11px; color:var(--accent); margin-top:8px; display:none; font-weight:600; text-align:center; align-items:center; justify-content:center; gap:4px;">
+            ${ICONS.check} Area Selected
+          </div>
+        </div>
 
-    <div class="sx-card">
-      <div class="sx-label"><span>2</span> Output Mode</div>
-      <div class="sx-mode-grid">
-        ${createModeBtn('kid-friendly', 'Kid Friendly')}
-        ${createModeBtn('story', 'Story Mode')}
-        ${createModeBtn('exam', 'Exam Gen')}
-        ${createModeBtn('step-by-step', 'Step-by-Step')}
-        ${createModeBtn('summary', 'Summary')}
-        ${createModeBtn('formal', 'Formal')}
-      </div>
-    </div>
+        <div class="sx-card">
+          <div class="sx-label"><span>2</span> Output Mode</div>
+          <div class="sx-mode-grid">
+            ${createModeBtn('kid-friendly', 'Kid Friendly')}
+            ${createModeBtn('story', 'Story Mode')}
+            ${createModeBtn('exam', 'Exam Gen')}
+            ${createModeBtn('step-by-step', 'Step-by-Step')}
+            ${createModeBtn('summary', 'Summary')}
+            ${createModeBtn('formal', 'Formal')}
+          </div>
+        </div>
 
-    <div style="margin-top:auto; padding-top:20px;">
-      <button id="sb-generate-btn" class="sx-gen-btn">${ICONS.magic} <span>Generate Result</span></button>
+        <div style="margin-top:auto; padding-top:20px;">
+          <button id="sb-generate-btn" class="sx-gen-btn">${ICONS.magic} <span>Generate Result</span></button>
+        </div>
     </div>
   `;
 
   document.body.appendChild(sidebarEl);
+  makeDraggable(sidebarEl, sidebarEl.querySelector('.sx-drag-header'));
 
+  // Listeners
   sidebarEl.querySelector('#sb-close').onclick = toggleSidebar;
+  sidebarEl.querySelector('#sb-min').onclick = (e) => { e.stopPropagation(); toggleMinimize(sidebarEl); };
   sidebarEl.querySelector('#sb-crop-btn').onclick = toggleCropTool;
   sidebarEl.querySelector('#sb-theme-toggle').onclick = cycleTheme;
   const genBtn = sidebarEl.querySelector('#sb-generate-btn');
   genBtn.onclick = handleGenerateClick;
 
+  sidebarEl.onclick = (e) => {
+      if(sidebarEl.classList.contains('sx-minimized')) toggleMinimize(sidebarEl);
+  };
+
   const modeBtns = sidebarEl.querySelectorAll('.sx-mode-btn');
   modeBtns.forEach(btn => {
-    btn.onclick = () => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
       modeBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentMode = btn.dataset.mode;
@@ -242,6 +265,43 @@ function toggleSidebar() {
   });
   const defaultBtn = sidebarEl.querySelector(`button[data-mode="${currentMode}"]`);
   if(defaultBtn) defaultBtn.click();
+}
+
+// --- Draggable Logic ---
+function makeDraggable(element, handle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    handle.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        element.style.right = 'auto';
+        element.style.bottom = 'auto';
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+
+function toggleMinimize(el) {
+    el.classList.toggle('sx-minimized');
 }
 
 function applySidebarStyles(el) {
@@ -260,13 +320,13 @@ function applySidebarStyles(el) {
   el.style.setProperty('--chatBotBg', t.chatBotBg);
 
   el.style.cssText += `
-    position: fixed; top: 0; right: 0; bottom: 0; width: 340px;
+    position: fixed; top: 20px; right: 20px; width: 340px; height: auto; max-height: 90vh;
     background: var(--sidebarBg); ${t.glass}
-    box-shadow: -10px 0 40px rgba(0,0,0,0.1);
-    z-index: 2147483647; padding: 24px;
+    box-shadow: -10px 0 40px rgba(0,0,0,0.2);
+    z-index: 2147483647; 
     display: flex; flex-direction: column;
-    border-left: 1px solid var(--border);
-    animation: sx-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--border); border-radius: 12px;
+    animation: sx-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   `;
 }
 
@@ -276,8 +336,24 @@ function cycleTheme() {
   else currentTheme = 'blue';
   
   if (sidebarEl) applySidebarStyles(sidebarEl);
+  
   const overlay = document.getElementById('simplix-result-overlay');
-  if (overlay) renderResult(null, currentMode, true);
+  if (overlay) {
+      const t = THEMES[currentTheme];
+      overlay.style.setProperty('--bg', t.bg);
+      overlay.style.setProperty('--cardBg', t.cardBg);
+      overlay.style.setProperty('--text', t.text);
+      overlay.style.setProperty('--accent', t.accent);
+      overlay.style.setProperty('--accentText', t.accentText);
+      overlay.style.setProperty('--border', t.border);
+      overlay.style.setProperty('--chatUserBg', t.chatUserBg);
+      overlay.style.setProperty('--chatBotBg', t.chatBotBg);
+      overlay.style.background = t.cardBg;
+      overlay.style.borderColor = t.border;
+      const h = overlay.querySelector('.sx-drag-header');
+      if(h) h.style.background = t.bg;
+      renderResult(null, currentMode, true);
+  }
   
   const chatPopup = document.getElementById('simplix-chat-popup');
   if (chatPopup) {
@@ -286,6 +362,7 @@ function cycleTheme() {
      chatPopup.style.setProperty('--cardBg', t.cardBg);
      chatPopup.style.setProperty('--text', t.text);
      chatPopup.style.setProperty('--accent', t.accent);
+     chatPopup.style.setProperty('--accentText', t.accentText);
      chatPopup.style.setProperty('--border', t.border);
      chatPopup.style.setProperty('--chatUserBg', t.chatUserBg);
      chatPopup.style.setProperty('--chatBotBg', t.chatBotBg);
@@ -298,7 +375,7 @@ function createModeBtn(mode, label) {
   return `<button class="sx-mode-btn" data-mode="${mode}">${label}</button>`;
 }
 
-// --- 3. Crop Tool ---
+// --- 3. Auto-Scrolling Crop Tool ---
 function toggleCropTool() {
   if (cropOverlayEl || cropCleanup) {
     if (cropCleanup) cropCleanup();
@@ -340,6 +417,7 @@ function toggleCropTool() {
 
   let isResizing = false, isMoving = false, currentHandle = null;
   let dragStartX = 0, dragStartY = 0, dragStartLeft = 0, dragStartTop = 0, dragStartW = 0, dragStartH = 0;
+  let autoScrollInterval = null;
 
   const onMouseDown = (e) => {
     if (e.target.classList.contains('crop-handle')) { isResizing = true; currentHandle = e.target.dataset.dir; } 
@@ -352,8 +430,22 @@ function toggleCropTool() {
   };
 
   const onMouseMove = (e) => {
+    if (isMoving || isResizing) {
+        const threshold = 60; 
+        const scrollSpeed = 15;
+        if (e.clientY < threshold) {
+            if (!autoScrollInterval) autoScrollInterval = setInterval(() => window.scrollBy(0, -scrollSpeed), 20);
+        } else if (window.innerHeight - e.clientY < threshold) {
+            if (!autoScrollInterval) autoScrollInterval = setInterval(() => window.scrollBy(0, scrollSpeed), 20);
+        } else {
+            if (autoScrollInterval) { clearInterval(autoScrollInterval); autoScrollInterval = null; }
+        }
+    }
+
     if (!isMoving && !isResizing) return;
+
     const dx = e.pageX - dragStartX, dy = e.pageY - dragStartY;
+    
     if (isMoving) {
       box.style.left = (dragStartLeft + dx) + 'px'; 
       box.style.top = (dragStartTop + dy) + 'px';
@@ -370,13 +462,18 @@ function toggleCropTool() {
   };
 
   const onMouseUp = () => {
+    if (autoScrollInterval) { clearInterval(autoScrollInterval); autoScrollInterval = null; }
+    
     if (isMoving || isResizing) {
       selectionRect = { left: box.offsetLeft, top: box.offsetTop, width: box.offsetWidth, height: box.offsetHeight };
       if (sidebarEl) {
-        sidebarEl.querySelector('#sb-crop-status').style.display = 'flex';
+        const status = sidebarEl.querySelector('#sb-crop-status');
         const btn = sidebarEl.querySelector('#sb-crop-btn');
-        btn.innerHTML = `${ICONS.check} Area Set`;
-        btn.classList.add('active');
+        if(status && btn) {
+            status.style.display = 'flex';
+            btn.innerHTML = `${ICONS.check} Area Set`;
+            btn.classList.add('active');
+        }
       }
     }
     isMoving = false; isResizing = false;
@@ -389,6 +486,7 @@ function toggleCropTool() {
   window.addEventListener('mouseup', onMouseUp);
   cropOverlayEl.addEventListener('dblclick', onDblClick);
   cropCleanup = () => {
+    if (autoScrollInterval) clearInterval(autoScrollInterval);
     if (cropOverlayEl) { cropOverlayEl.remove(); cropOverlayEl = null; }
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mouseup', onMouseUp);
@@ -501,8 +599,9 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
     overlay.id = 'simplix-result-overlay';
     const t = THEMES[currentTheme];
     overlay.style = `
-      position: fixed; left: 50%; top: 5%; transform: translateX(-50%);
-      width: 65%; height: 85vh; background: ${t.cardBg}; z-index: 2147483648;
+      position: fixed; top: 5%; left: 50%; width: 65%; height: 85vh; 
+      transform: translateX(-50%); /* Start centered */
+      background: ${t.cardBg}; z-index: 2147483648;
       box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
       border-radius: 16px; border: 1px solid ${t.border};
       display: flex; flex-direction: column; overflow: hidden; font-family: 'Inter', sans-serif;
@@ -512,12 +611,20 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
   } else if (!overlay && isRefreshOnly) return;
 
   const t = THEMES[currentTheme];
+  overlay.style.setProperty('--bg', t.bg);
+  overlay.style.setProperty('--cardBg', t.cardBg);
+  overlay.style.setProperty('--text', t.text);
+  overlay.style.setProperty('--accent', t.accent);
+  overlay.style.setProperty('--accentText', t.accentText);
+  overlay.style.setProperty('--border', t.border);
+  overlay.style.setProperty('--chatUserBg', t.chatUserBg);
+  overlay.style.setProperty('--chatBotBg', t.chatBotBg);
   overlay.style.background = t.cardBg;
   overlay.style.borderColor = t.border;
   overlay.style.color = t.text;
   
   if(isRefreshOnly) {
-     const header = overlay.querySelector('.sx-res-header');
+     const header = overlay.querySelector('.sx-drag-header');
      if(header) { header.style.background = t.bg; header.style.borderColor = t.border; }
      return;
   }
@@ -528,21 +635,26 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
   else contentRaw = JSON.stringify(modelData);
 
   let html = `
-    <div class="sx-res-header" style="background:${t.bg}; border-bottom:1px solid ${t.border}; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
-      <div style="font-weight:700; font-size:16px; display:flex; align-items:center; gap:8px; color:${t.text};">
-        <span style="color:${t.accent}">${ICONS.magic}</span> Result: <span style="opacity:0.7">${mode.toUpperCase().replace('-', ' ')}</span>
+    <div class="sx-drag-header">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="cursor:move; color:var(--accent); display:flex;">${ICONS.move}</div>
+        <div style="font-weight:700; font-size:16px; display:flex; align-items:center; gap:8px; color:var(--text);">
+           <span style="color:var(--accent);">${ICONS.magic}</span> Result: <span style="opacity:0.7">${mode.toUpperCase().replace('-', ' ')}</span>
+        </div>
       </div>
-      <button id="res-close" style="background:transparent; border:none; color:${t.subText}; cursor:pointer; padding:8px; border-radius:6px; display:flex;">${ICONS.close}</button>
+      <div style="display:flex; gap:4px;">
+        <button id="res-min" class="sx-btn-icon" title="Minimize">${ICONS.minimize}</button>
+        <button id="res-close" class="sx-btn-icon" title="Close">${ICONS.close}</button>
+      </div>
     </div>
-    <div id="simplix-result-content" style="padding:40px; overflow-y:auto; flex-grow:1; line-height:1.7; color:${t.text}; font-size:16px; background:${t.bg};">
+    
+    <div id="simplix-result-content" style="padding:40px; overflow-y:auto; flex-grow:1; line-height:1.7; color:var(--text); font-size:16px; background:var(--bg);">
   `;
 
   if (mode === 'exam') {
     try {
-      // --- FIX: Robust JSON Extraction ---
       const firstBrace = contentRaw.indexOf('{');
       const lastBrace = contentRaw.lastIndexOf('}');
-      
       if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
           const jsonCandidate = contentRaw.substring(firstBrace, lastBrace + 1);
           const examData = JSON.parse(jsonCandidate);
@@ -564,170 +676,181 @@ function renderResult(modelData, mode, isRefreshOnly = false) {
 
   html += `</div>`;
   overlay.innerHTML = html;
-  overlay.querySelector('#res-close').onclick = () => { overlay.remove(); if(chatPopupTimer) clearTimeout(chatPopupTimer); const p = document.getElementById('simplix-chat-popup'); if(p) p.remove(); };
   
+  makeDraggable(overlay, overlay.querySelector('.sx-drag-header'));
+  
+  overlay.querySelector('#res-close').onclick = () => { overlay.remove(); if(chatPopupTimer) clearTimeout(chatPopupTimer); const p = document.getElementById('simplix-chat-popup'); if(p) p.remove(); };
+  overlay.querySelector('#res-min').onclick = (e) => { e.stopPropagation(); toggleMinimize(overlay); };
+  
+  overlay.onclick = (e) => { if(overlay.classList.contains('sx-minimized')) toggleMinimize(overlay); };
+
   if (mode === 'exam') attachExamListeners(overlay, t);
 }
 
-// --- 8. Floating Chatbot Logic ---
+// --- 8. Floating Chatbot Logic (Ensure this is updated) ---
 function showFloatingChat(contextText) {
-    if (document.getElementById('simplix-chat-popup')) return;
+  if (document.getElementById('simplix-chat-popup')) return;
 
-    const t = THEMES[currentTheme];
-    const popup = document.createElement('div');
-    popup.id = 'simplix-chat-popup';
-    
-    // Apply CSS vars
-    popup.style.setProperty('--cardBg', t.cardBg);
-    popup.style.setProperty('--border', t.border);
-    popup.style.setProperty('--accent', t.accent);
-    popup.style.setProperty('--text', t.text);
-    popup.style.setProperty('--subText', t.subText);
-    popup.style.setProperty('--chatUserBg', t.chatUserBg);
-    popup.style.setProperty('--chatBotBg', t.chatBotBg);
-    popup.style.setProperty('--bg', t.bg);
+  const t = THEMES[currentTheme];
+  const popup = document.createElement('div');
+  popup.id = 'simplix-chat-popup';
+  
+  // Set variables for children to use
+  popup.style.setProperty('--cardBg', t.cardBg);
+  popup.style.setProperty('--border', t.border);
+  popup.style.setProperty('--accent', t.accent);
+  popup.style.setProperty('--accentText', t.accentText);
+  popup.style.setProperty('--text', t.text);
+  popup.style.setProperty('--subText', t.subText);
+  popup.style.setProperty('--chatUserBg', t.chatUserBg);
+  popup.style.setProperty('--chatBotBg', t.chatBotBg);
+  popup.style.setProperty('--bg', t.bg);
 
-    popup.innerHTML = `
-        <div id="chat-header" style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg); border-radius:12px 12px 0 0; cursor:pointer;">
-            <div style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; color:var(--text);">
-                <span style="color:var(--accent);">${ICONS.bot}</span> SimplixBot
-            </div>
-            <button id="chat-minimize" style="background:transparent; border:none; color:var(--subText); cursor:pointer;">${ICONS.minimize}</button>
-        </div>
-        
-        <div style="padding:8px; border-bottom:1px solid var(--border); background:var(--cardBg); display:flex; justify-content:center; gap:6px;">
-            <button id="chat-mode-relevant" class="sx-chat-mode-btn active" data-tooltip="Strictly answers questions based on the selected text only.">Relevant Mode</button>
-            <button id="chat-mode-general" class="sx-chat-mode-btn" data-tooltip="Answers general knowledge questions beyond the selected text.">General Mode</button>
-        </div>
+  popup.innerHTML = `
+      <div id="chat-header" class="sx-drag-header">
+          <div style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; color:var(--text);">
+              <div style="cursor:move; color:var(--accent); display:flex;">${ICONS.move}</div>
+              <span style="color:var(--accent);">${ICONS.bot}</span> SimplixBot
+          </div>
+          <button id="chat-minimize" style="background:transparent; border:none; color:var(--subText); cursor:pointer;">${ICONS.minimize}</button>
+      </div>
+      
+      <div style="padding:8px; border-bottom:1px solid var(--border); background:var(--cardBg); display:flex; justify-content:center; gap:6px;">
+          <button id="chat-mode-relevant" class="sx-chat-mode-btn active" data-tooltip="Strictly answers questions based on the selected text only.">Relevant Mode</button>
+          <button id="chat-mode-general" class="sx-chat-mode-btn" data-tooltip="Answers general knowledge questions beyond the selected text.">General Mode</button>
+      </div>
 
-        <div id="simplix-chat-history" style="flex-grow:1; overflow-y:auto; padding:12px; background:var(--bg); display:flex; flex-direction:column; gap:8px;">
-            <div style="font-size:13px; color:var(--subText); text-align:center; margin-top:10px;">
-                Hello! I'm ready to help. <br>Ask me about the content on screen.
-            </div>
-        </div>
+      <div id="simplix-chat-history" style="flex-grow:1; overflow-y:auto; padding:12px; background:var(--bg); display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:13px; color:var(--subText); text-align:center; margin-top:10px;">
+              Hello! I'm ready to help. <br>Ask me about the content on screen.
+          </div>
+      </div>
 
-        <div style="padding:10px; background:var(--cardBg); border-top:1px solid var(--border); border-radius:0 0 12px 12px; display:flex; gap:6px;">
-            <input type="text" id="simplix-chat-input" placeholder="Ask a question..." style="flex-grow:1; border:1px solid var(--border); padding:8px 10px; border-radius:6px; outline:none; font-size:13px; background:var(--bg); color:var(--text);">
-            <button id="simplix-chat-send" style="background:var(--accent); color:var(--accentText); border:none; padding:0 12px; border-radius:6px; cursor:pointer;">${ICONS.send}</button>
-        </div>
-    `;
+      <div style="padding:10px; background:var(--cardBg); border-top:1px solid var(--border); border-radius:0 0 12px 12px; display:flex; gap:6px;">
+          <input type="text" id="simplix-chat-input" placeholder="Ask a question..." style="flex-grow:1; border:1px solid var(--border); padding:8px 10px; border-radius:6px; outline:none; font-size:13px; background:var(--bg); color:var(--text);">
+          <button id="simplix-chat-send" style="background:var(--accent); color:var(--accentText); border:none; padding:0 12px; border-radius:6px; cursor:pointer;">${ICONS.send}</button>
+      </div>
+  `;
 
-    document.body.appendChild(popup);
-    
-    // Animation trigger
-    setTimeout(() => popup.classList.add('visible'), 50);
+  document.body.appendChild(popup);
+  makeDraggable(popup, popup.querySelector('#chat-header'));
+  
+  // Force Reflow
+  void popup.offsetWidth; 
+  popup.classList.add('visible');
 
-    // --- Interaction Logic ---
-    const historyDiv = popup.querySelector('#simplix-chat-history');
-    const inputEl = popup.querySelector('#simplix-chat-input');
-    const sendBtn = popup.querySelector('#simplix-chat-send');
-    const relevantBtn = popup.querySelector('#chat-mode-relevant');
-    const generalBtn = popup.querySelector('#chat-mode-general');
-    const minimizeBtn = popup.querySelector('#chat-minimize');
-    const header = popup.querySelector('#chat-header');
+  const historyDiv = popup.querySelector('#simplix-chat-history');
+  const inputEl = popup.querySelector('#simplix-chat-input');
+  const sendBtn = popup.querySelector('#simplix-chat-send');
+  const relevantBtn = popup.querySelector('#chat-mode-relevant');
+  const generalBtn = popup.querySelector('#chat-mode-general');
+  const minimizeBtn = popup.querySelector('#chat-minimize');
 
-    // Toggle Minimize
-    const toggleMin = () => {
-        popup.classList.toggle('minimized');
-    };
-    minimizeBtn.onclick = (e) => { e.stopPropagation(); toggleMin(); };
-    popup.onclick = (e) => {
-        if(popup.classList.contains('minimized')) toggleMin();
-    };
+  const toggleMin = () => { popup.classList.toggle('sx-minimized'); };
+  minimizeBtn.onclick = (e) => { e.stopPropagation(); toggleMin(); };
+  popup.onclick = (e) => { if(popup.classList.contains('sx-minimized')) toggleMin(); };
 
-    // Mode Switching
-    relevantBtn.onclick = () => {
-        chatMode = 'relevant';
-        relevantBtn.classList.add('active');
-        generalBtn.classList.remove('active');
-        inputEl.placeholder = "Ask strict questions about text...";
-    };
-    generalBtn.onclick = () => {
-        chatMode = 'general';
-        generalBtn.classList.add('active');
-        relevantBtn.classList.remove('active');
-        inputEl.placeholder = "Ask general questions...";
-    };
+  relevantBtn.onclick = () => {
+      chatMode = 'relevant';
+      relevantBtn.classList.add('active');
+      generalBtn.classList.remove('active');
+      inputEl.placeholder = "Ask strict questions about text...";
+  };
+  generalBtn.onclick = () => {
+      chatMode = 'general';
+      generalBtn.classList.add('active');
+      relevantBtn.classList.remove('active');
+      inputEl.placeholder = "Ask general questions...";
+  };
 
-    // Messaging
-    const appendMessage = (role, text) => {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `sx-chat-msg ${role === 'user' ? 'sx-chat-user' : 'sx-chat-bot'}`;
-        msgDiv.textContent = text;
-        historyDiv.appendChild(msgDiv);
-        historyDiv.scrollTop = historyDiv.scrollHeight;
-    };
+  const appendMessage = (role, text) => {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `sx-chat-msg ${role === 'user' ? 'sx-chat-user' : 'sx-chat-bot'}`;
+      msgDiv.textContent = text;
+      historyDiv.appendChild(msgDiv);
+      historyDiv.scrollTop = historyDiv.scrollHeight;
+  };
 
-    const handleSend = async () => {
-        const query = inputEl.value.trim();
-        if(!query) return;
+  const handleSend = async () => {
+      const query = inputEl.value.trim();
+      if(!query) return;
 
-        inputEl.value = "";
-        appendMessage('user', query);
-        
-        const loadingId = 'bot-load-' + Date.now();
-        const loadingDiv = document.createElement('div');
-        loadingDiv.id = loadingId;
-        loadingDiv.className = 'sx-chat-msg sx-chat-bot';
-        loadingDiv.style.opacity = '0.7'; loadingDiv.innerText = "...";
-        historyDiv.appendChild(loadingDiv);
-        historyDiv.scrollTop = historyDiv.scrollHeight;
+      inputEl.value = "";
+      appendMessage('user', query);
+      
+      const loadingId = 'bot-load-' + Date.now();
+      const loadingDiv = document.createElement('div');
+      loadingDiv.id = loadingId;
+      loadingDiv.className = 'sx-chat-msg sx-chat-bot';
+      loadingDiv.style.opacity = '0.7'; loadingDiv.innerText = "...";
+      historyDiv.appendChild(loadingDiv);
+      historyDiv.scrollTop = historyDiv.scrollHeight;
 
-        try {
-            let messages = [];
-            if (chatMode === 'relevant') {
-                messages.push({
-                    role: "system",
-                    content: `You are SimplixBot. STRICT RULE: Answer ONLY based on the provided context. If the answer is not in the text, say "Sorry, it is not present in the selected area, out of context."\n\n[CONTEXT]:\n${currentContextText}`
-                });
-            } else {
-                messages.push({ role: "system", content: "You are SimplixBot, a helpful assistant." });
-            }
+      try {
+          let messages = [];
+          if (chatMode === 'relevant') {
+              messages.push({
+                  role: "system",
+                  content: `You are SimplixBot. STRICT RULE: Answer ONLY based on the provided context. If the answer is not in the text, say "Sorry, it is not present in the selected area, out of context."\n\n[CONTEXT]:\n${currentContextText}`
+              });
+          } else {
+              messages.push({ role: "system", content: "You are SimplixBot, a helpful assistant." });
+          }
 
-            const recentHistory = chatHistory.slice(-4);
-            recentHistory.forEach(m => messages.push(m));
-            messages.push({ role: "user", content: query });
+          const recentHistory = chatHistory.slice(-4);
+          recentHistory.forEach(m => messages.push(m));
+          messages.push({ role: "user", content: query });
 
-            const r = await new Promise((resolve, reject) => {
-                chrome.runtime.sendMessage({ action: "invokeGroq", messages }, (res) => {
-                    if (!res.ok) reject(new Error(res.error?.message || "Error"));
-                    else resolve(res.data);
-                });
-            });
+          const r = await new Promise((resolve, reject) => {
+              chrome.runtime.sendMessage({ action: "invokeGroq", messages }, (res) => {
+                  if (!res.ok) reject(new Error(res.error?.message || "Error"));
+                  else resolve(res.data);
+              });
+          });
 
-            const botText = r.choices[0].message.content;
-            document.getElementById(loadingId).remove();
-            appendMessage('assistant', botText);
-            
-            chatHistory.push({ role: "user", content: query });
-            chatHistory.push({ role: "assistant", content: botText });
-        } catch (err) {
-            document.getElementById(loadingId).remove();
-            appendMessage('assistant', "Error: " + err.message);
-        }
-    };
+          const botText = r.choices[0].message.content;
+          document.getElementById(loadingId).remove();
+          appendMessage('assistant', botText);
+          
+          chatHistory.push({ role: "user", content: query });
+          chatHistory.push({ role: "assistant", content: botText });
+      } catch (err) {
+          document.getElementById(loadingId).remove();
+          appendMessage('assistant', "Error: " + err.message);
+      }
+  };
 
-    sendBtn.onclick = handleSend;
-    inputEl.onkeydown = (e) => { if(e.key === 'Enter') handleSend(); };
+  sendBtn.onclick = handleSend;
+  inputEl.onkeydown = (e) => { if(e.key === 'Enter') handleSend(); };
 }
 
+// --- DEFENSIVE JSON RENDERING ---
 function renderInteractiveExam(data, t) {
+  // 1. Valid Data Check
+  if (!data) return `<div style="padding:20px; color:red;">Error: No exam data received.</div>`;
+
+  // 2. Safe Array Access (prevents "undefined reading length" crash)
+  const mcqs = Array.isArray(data.mcqs) ? data.mcqs : [];
+  const short_answer = Array.isArray(data.short_answer) ? data.short_answer : [];
+  const long_answer = Array.isArray(data.long_answer) ? data.long_answer : [];
+
   let h = `<div style="max-width:800px; margin:0 auto;">`;
   h += `
-    <div style="background:${t.cardBg}; padding:24px; border-radius:12px; margin-bottom:32px; border:1px solid ${t.border}; display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0; color:${t.text}; font-size:20px; font-weight:700;">Interactive Exam</h3>
-      <div style="font-weight:600; color:${t.accent}; font-size:18px; padding:6px 12px; background:${t.bg}; border-radius:8px; border:1px solid ${t.border};">Score: <span id="exam-score">0</span> / ${data.mcqs.length}</div>
+    <div style="background:var(--cardBg); padding:24px; border-radius:12px; margin-bottom:32px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="margin:0; color:var(--text); font-size:20px; font-weight:700;">Interactive Exam</h3>
+      <div style="font-weight:600; color:var(--accent); font-size:18px; padding:6px 12px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">Score: <span id="exam-score">0</span> / ${mcqs.length}</div>
     </div>
   `;
-  if(data.mcqs && data.mcqs.length > 0) {
-    h += `<div style="font-size:12px; font-weight:700; color:${t.subText}; text-transform:uppercase; margin-bottom:16px; letter-spacing:1px;">Part A: Multiple Choice</div>`;
-    data.mcqs.forEach((q, idx) => {
+  
+  if(mcqs.length > 0) {
+    h += `<div style="font-size:12px; font-weight:700; color:var(--subText); text-transform:uppercase; margin-bottom:16px; letter-spacing:1px;">Part A: Multiple Choice</div>`;
+    mcqs.forEach((q, idx) => {
       h += `
-        <div class="exam-mcq" data-correct="${q.correctIndex}" style="margin-bottom:24px; background:${t.cardBg}; border:1px solid ${t.border}; padding:24px; border-radius:12px; transition:0.2s;">
-          <div style="font-weight:600; margin-bottom:16px; color:${t.text}; font-size:17px;">${idx+1}. ${q.question}</div>
+        <div class="exam-mcq" data-correct="${q.correctIndex}" style="margin-bottom:24px; background:var(--cardBg); border:1px solid var(--border); padding:24px; border-radius:12px; transition:0.2s;">
+          <div style="font-weight:600; margin-bottom:16px; color:var(--text); font-size:17px;">${idx+1}. ${q.question}</div>
           <div style="display:grid; gap:10px;">
             ${q.options.map((opt, i) => `
-              <button class="exam-opt-btn" data-idx="${i}" style="text-align:left; padding:14px 16px; border:1px solid ${t.border}; background:${t.bg}; color:${t.text}; border-radius:8px; cursor:pointer; transition:all 0.2s; font-size:15px; font-weight:500;">
+              <button class="exam-opt-btn" data-idx="${i}" style="text-align:left; padding:14px 16px; border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:8px; cursor:pointer; transition:all 0.2s; font-size:15px; font-weight:500;">
                 <span style="opacity:0.5; margin-right:8px; font-weight:normal;">${String.fromCharCode(65+i)}</span> ${opt}
               </button>
             `).join('')}
@@ -737,32 +860,32 @@ function renderInteractiveExam(data, t) {
     });
   }
   
-  if(data.short_answer && data.short_answer.length > 0) {
-    h += `<div style="font-size:12px; font-weight:700; color:${t.subText}; text-transform:uppercase; margin-bottom:16px; letter-spacing:1px; margin-top:40px;">Part B: Short Answer</div>`;
-    data.short_answer.forEach((q, idx) => {
+  if(short_answer.length > 0) {
+    h += `<div style="font-size:12px; font-weight:700; color:var(--subText); text-transform:uppercase; margin-bottom:16px; letter-spacing:1px; margin-top:40px;">Part B: Short Answer</div>`;
+    short_answer.forEach((q, idx) => {
       h += `
-        <div style="margin-bottom:24px; padding:24px; background:${t.cardBg}; border:1px solid ${t.border}; border-radius:12px;">
-          <div style="font-weight:600; font-size:16px; margin-bottom:12px; color:${t.text};">Q${idx+1}. ${q.question}</div>
+        <div style="margin-bottom:24px; padding:24px; background:var(--cardBg); border:1px solid var(--border); border-radius:12px;">
+          <div style="font-weight:600; font-size:16px; margin-bottom:12px; color:var(--text);">Q${idx+1}. ${q.question}</div>
           <details style="margin-top:12px;">
-            <summary style="cursor:pointer; color:${t.accent}; font-weight:500; font-size:14px; outline:none;">Show Answer Key</summary>
-            <div style="margin-top:12px; padding:16px; background:${t.bg}; border-radius:8px; border:1px solid ${t.border};">
-              <ul style="margin:0; padding-left:20px; color:${t.subText}; line-height:1.6;">${q.answer_points.map(p => `<li>${p}</li>`).join('')}</ul>
+            <summary style="cursor:pointer; color:var(--accent); font-weight:500; font-size:14px; outline:none;">Show Answer Key</summary>
+            <div style="margin-top:12px; padding:16px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">
+              <ul style="margin:0; padding-left:20px; color:var(--subText); line-height:1.6;">${q.answer_points.map(p => `<li>${p}</li>`).join('')}</ul>
             </div>
           </details>
         </div>`;
     });
   }
 
-  if(data.long_answer && data.long_answer.length > 0) {
-    h += `<div style="font-size:12px; font-weight:700; color:${t.subText}; text-transform:uppercase; margin-bottom:16px; letter-spacing:1px; margin-top:40px;">Part C: Long Answer</div>`;
-    data.long_answer.forEach((q, idx) => {
+  if(long_answer.length > 0) {
+    h += `<div style="font-size:12px; font-weight:700; color:var(--subText); text-transform:uppercase; margin-bottom:16px; letter-spacing:1px; margin-top:40px;">Part C: Long Answer</div>`;
+    long_answer.forEach((q, idx) => {
         h += `
-        <div style="margin-bottom:24px; padding:24px; background:${t.cardBg}; border:1px solid ${t.border}; border-radius:12px;">
-          <div style="font-weight:600; font-size:16px; margin-bottom:12px; color:${t.text};">Q${idx+1}. ${q.question}</div>
+        <div style="margin-bottom:24px; padding:24px; background:var(--cardBg); border:1px solid var(--border); border-radius:12px;">
+          <div style="font-weight:600; font-size:16px; margin-bottom:12px; color:var(--text);">Q${idx+1}. ${q.question}</div>
           <details style="margin-top:12px;">
-            <summary style="cursor:pointer; color:${t.accent}; font-weight:500; font-size:14px; outline:none;">Show Answer Key</summary>
-             <div style="margin-top:12px; padding:16px; background:${t.bg}; border-radius:8px; border:1px solid ${t.border};">
-              <ul style="margin:0; padding-left:20px; color:${t.subText}; line-height:1.6;">${q.answer_points.map(p => `<li>${p}</li>`).join('')}</ul>
+            <summary style="cursor:pointer; color:var(--accent); font-weight:500; font-size:14px; outline:none;">Show Answer Key</summary>
+             <div style="margin-top:12px; padding:16px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">
+              <ul style="margin:0; padding-left:20px; color:var(--subText); line-height:1.6;">${q.answer_points.map(p => `<li>${p}</li>`).join('')}</ul>
             </div>
           </details>
         </div>`;
@@ -798,8 +921,8 @@ function attachExamListeners(overlay, t) {
         }
         feedback.style.display = "block";
       };
-      btn.onmouseenter = () => { if(!answered) btn.style.borderColor = t.accent; };
-      btn.onmouseleave = () => { if(!answered) btn.style.borderColor = t.border; };
+      btn.onmouseenter = () => { if(!answered) btn.style.borderColor = getComputedStyle(overlay).getPropertyValue('--accent'); };
+      btn.onmouseleave = () => { if(!answered) btn.style.borderColor = getComputedStyle(overlay).getPropertyValue('--border'); };
     });
   });
 }
