@@ -75,7 +75,7 @@ Once a result is generated, the **SimplixBot** window appears automatically.
     * *Tip:* Drag to the bottom edge to auto-scroll and capture long text.
 3.  **Choose Mode:** Click one of the 6 mode buttons (e.g., "Summary" or "Exam").
 4.  **Generate:** Click **"Generate Result"**.
-5.  **Interact:** * Read the result in the overlay.
+5.  **Interact:** Read the result in the overlay.
     * If using Exam mode, click options to test yourself.
     * Use the Chat popup to ask specific questions about what you just read.
 
